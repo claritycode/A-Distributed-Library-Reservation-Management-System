@@ -16,18 +16,16 @@ public class createAccountCall extends ClientCall implements Serializable{
 	private String lastName ;
 	private String email ;
 	private String phoneNumber ;
-	private String educationalInstitute ;
 	
 	public createAccountCall ( InetAddress ip, int port, String f, String l, String e,
 			String p, String u, String ps, String edu ) {
 		
-		super ( ip, port, u, ps ) ;
+		super ( ip, port, u, ps, edu ) ;
 		
 		firstName = f ;
 		lastName = l ;
 		email = e ;
 		phoneNumber = p ;
-		educationalInstitute = edu ;
 	}
 	
 	
@@ -57,12 +55,5 @@ public class createAccountCall extends ClientCall implements Serializable{
 	 */
 	public String getPhoneNumber() {
 		return phoneNumber;
-	}
-	
-	/**
-	 * @return the educationalInstitute
-	 */
-	public String getEducationalInstitute() {
-		return educationalInstitute;
 	}
 }

@@ -11,24 +11,15 @@ import java.net.* ;
  */
 public class getNonReturnersCall extends ClientCall implements Serializable {
 		
-	private String educationalInstitute ;
 	private long days ;
 	
 	public getNonReturnersCall ( InetAddress ip, int port, 
 			String us, String ps, String edu, long d ) {
 		
-		super ( ip, port, us, ps ) ;
-		educationalInstitute = edu ;
+		super ( ip, port, us, ps, edu ) ;
 		days = d ;
 	}
 	
-	/**
-	 * @return the educationalInstitute
-	 */
-	public String getEducationalInstitute() {
-		return educationalInstitute;
-	}
-
 	/**
 	 * @return the days
 	 */

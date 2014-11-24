@@ -15,12 +15,14 @@ public class ClientCall implements Serializable{
 	
 	private String username ;
 	private String password ;
+	private String educationalInstitute ;
 
-	public ClientCall (  InetAddress ip, int port, String us, String ps ) {
+	public ClientCall (  InetAddress ip, int port, String us, String ps, String edu ) {
 		FEIPAddress = ip ;
 		FEPortNumber = port ;
 		username = us ;
 		password = ps ;
+		educationalInstitute = edu ;
 	}
 	
 	/**
@@ -64,4 +66,11 @@ public class ClientCall implements Serializable{
 	public String getPassword() {
 		return password;
 	}
+
+	/**
+	 * @return the name of educationalInstitute
+	 */
+	public String getEducationalInstitute() {
+		return educationalInstitute;
+	}	
 }

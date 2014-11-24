@@ -16,9 +16,9 @@ public class reserveInterLibraryCall extends ClientCall implements Serializable 
 	private String authorName ;
 	
 	public reserveInterLibraryCall ( InetAddress ip, int port, String us, String ps,
-			String bk, String au ) {
+			String bk, String au, String edu ) {
 		
-		super ( ip, port, us, ps ) ;
+		super ( ip, port, us, ps, edu ) ;
 		bookName = bk ;
 		authorName = au ;
 	}

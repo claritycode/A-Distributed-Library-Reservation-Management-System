@@ -18,9 +18,9 @@ public class setDurationCall extends ClientCall implements Serializable {
 	private long days ;
 	
 	public setDurationCall ( InetAddress ip, int port, 
-			String us, String ps, String stu, String bk, String au, long d ) {
+			String us, String ps, String stu, String bk, String au, long d, String edu ) {
 		
-		super ( ip, port, us, ps ) ;
+		super ( ip, port, us, ps, edu ) ;
 		studentUsername = stu ;
 		bookName = bk ;
 		authorName = au ;
