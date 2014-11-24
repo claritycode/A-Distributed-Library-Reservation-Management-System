@@ -1,0 +1,13 @@
+interface LibraryInterface {
+	string createAccount ( in string firstName, in string lastName, in string email, in string phoneNumber, in string username, in string password, in string educationalInstitute ) ;
+	
+	string reserveBook ( in string username, in string password, in string bookName, in string authorName ) ;
+
+	string reserveInterLibrary ( in string username, in string password, in string bookName, in string authorName ) ;
+
+	typedef sequence<string> result ;
+	result getNonReturners ( in string username, in string password, in string educationalInstitute, in long days ) ;
+
+	boolean setDuration ( in string username, in string password, in string studentUsername, in string bookName, in string authorName, in long days ) ;
+ 
+} ;
