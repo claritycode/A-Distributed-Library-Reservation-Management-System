@@ -51,7 +51,7 @@ public class setDurationCall extends ClientCall implements Serializable {
 	/**
 	 * @return the days
 	 */
-	public long getDays() {
+	public int getDays() {
 		return days;
 	}
 }
