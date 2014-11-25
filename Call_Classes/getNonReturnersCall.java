@@ -11,10 +11,10 @@ import java.net.* ;
  */
 public class getNonReturnersCall extends ClientCall implements Serializable {
 		
-	private long days ;
+	private int days ;
 	
 	public getNonReturnersCall ( InetAddress ip, int port, 
-			String us, String ps, String edu, long d ) {
+			String us, String ps, String edu, int d ) {
 		
 		super ( ip, port, us, ps, edu ) ;
 		days = d ;
