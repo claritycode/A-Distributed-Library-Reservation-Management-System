@@ -43,6 +43,24 @@ public class LibraryPOAImpl extends LibraryPOA {
 		Thread t = new Thread(this.udpServer);
 		t.start();
 	}
+
+	public LibraryPOAImpl(final String institution, final Map<String, String> properties, final int udpPort) {
+		this.name = institution;
+		System.setProperty("obj.log","./library_"+name+".log");
+
+		this.properties = properties;
+		final String studentsCsv = getLibraryProperty(PropertiesEnum.LIBRARY_STUDENTS_FILE);
+		final String booksCsv = getLibraryProperty(PropertiesEnum.LIBRARY_BOOKS_FILE);
+		
+		this.service = new LibraryServiceImpl(studentsCsv, booksCsv, name);
+		
+		LOGGER = Logger.getLogger(LibraryPOAImpl.class);
+		
+		// start the udp server
+		this.udpServer = new UDPServer(institution, udpPort, this);
+		Thread t = new Thread(this.udpServer);
+		t.start();
+	}
 	
 	public String getProperty(PropertiesEnum property) {
 		return this.properties.get(property.val());
