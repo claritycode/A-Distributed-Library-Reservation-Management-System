@@ -1,3 +1,4 @@
+module DRMSServices {
 struct lateStudent {
 		string firstName ;
 		string lastName ;
@@ -8,7 +9,6 @@ struct nonReturners {
 	string universityName ;
 	sequence<lateStudent> studentList ;
 } ;
-
 interface LibraryInterface {
 	boolean createAccount ( in string firstName, in string lastName, in string email, in string phoneNumber, in string username, in string password, in string educationalInstitute ) ;
 	
@@ -22,3 +22,4 @@ interface LibraryInterface {
 	boolean setDuration ( in string username, in string password, in string studentUsername, in string bookName, in string authorName, in long days ) ;
  
 } ;
+};
