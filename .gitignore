@@ -13,6 +13,7 @@ target/
 *.war
 *.ear
  
+ .recommenders/
 ######################
 # Windows
 ######################
