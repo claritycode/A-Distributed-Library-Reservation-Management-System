@@ -1,4 +1,4 @@
-package idl.rm;
+package rm.dummy;
 
 public interface ReplicaManager {
 
