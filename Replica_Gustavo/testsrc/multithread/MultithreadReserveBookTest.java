@@ -1,7 +1,5 @@
 package multithread;
 
-import idl.Library;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +7,7 @@ import java.util.Map;
 import org.omg.CORBA.UserException;
 
 import ui.UserUI;
+import DRMSServices.LibraryInterface;
 import client.POALoader;
 import client.StudentClient;
 import entities.constants.PropertiesEnum;
@@ -53,7 +52,7 @@ public class MultithreadReserveBookTest {
 		return threads;
 	}
 	
-	protected Library loadPoa(String institution) throws UserException {
+	protected LibraryInterface loadPoa(String institution) throws UserException {
 		Map<String, String> properties = UserUI.loadProperties();
 		String port = properties.get(PropertiesEnum.ORB_INITIAL_PORT.val());
 		String host = properties.get(PropertiesEnum.ORB_INITIAL_HOST.val());
@@ -65,7 +64,7 @@ public class MultithreadReserveBookTest {
 		final String username;
 		final StudentClient client;
 		
-		StudentHolder(String username, String password, String institution, Library poa) {
+		StudentHolder(String username, String password, String institution, LibraryInterface poa) {
 			this.username = username;
 			this.client = new StudentClient(username, password, institution, poa);
 		}

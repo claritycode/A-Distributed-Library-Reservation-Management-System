@@ -1,9 +1,8 @@
 package ui;
 
-import idl.Library;
-
 import org.omg.CORBA.UserException;
 
+import DRMSServices.LibraryInterface;
 import client.AdminClient;
 import entities.Administrator;
 
@@ -17,7 +16,7 @@ public class AdminUI extends UserUI<Administrator, AdminClient> {
 	@Override
 	public AdminClient createClient() throws UserException {
 		String institution = getLibraryName();
-		Library poa = loadServer(institution);
+		LibraryInterface poa = loadServer(institution);
 		
 		return new AdminClient("Admin", "Admin", institution, poa);
 	}

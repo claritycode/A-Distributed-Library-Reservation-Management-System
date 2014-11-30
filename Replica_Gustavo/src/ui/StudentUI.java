@@ -1,9 +1,8 @@
 package ui;
 
-import idl.Library;
-
 import org.omg.CORBA.UserException;
 
+import DRMSServices.LibraryInterface;
 import client.StudentClient;
 import entities.Student;
 
@@ -17,7 +16,7 @@ public class StudentUI extends UserUI<Student, StudentClient> {
 	@Override
 	public StudentClient createClient() throws UserException {
 		String institution = getLibraryName();
-		Library server = loadServer(institution);
+		LibraryInterface server = loadServer(institution);
 		
 		System.out.println("Please set client info to start:");
 		String username = getValidString("username: ");

@@ -69,22 +69,16 @@ module DRMSServices {
 		/**
 		 * Set the duration of the reservation of a book.
 		 * @param username the student username
-		 * @param bookName the booke reserved by the student
+		 * @param bookName the book reserved by the student
 		 * @param days the number of days the reservations will be set to
 		 * @return true if operation is successful.
 		 */
-		boolean setDuration ( in string username, in string bookName, in string authorName, in long days ) ;
+		boolean setDuration ( in string username, in string bookName, in long days ) ;
 		
 		/**
 		 * Shut down library and releases udp port.
 		 */
 		void shutDown();
-		
-		/**
-		 * Set udpPort of the replica.
-		 * @param port The replica udp port.
-		 */
-		void setUdpPort(in long port);
 		
 		/**
 		 * set byzantine flag to say if replica with give wrong responses.

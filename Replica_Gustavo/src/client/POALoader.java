@@ -1,17 +1,16 @@
 package client;
 
-import idl.Library;
-import idl.LibraryHelper;
-
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.UserException;
 import org.omg.CosNaming.NamingContextExt;
 import org.omg.CosNaming.NamingContextExtHelper;
 
+import DRMSServices.LibraryInterface;
+import DRMSServices.LibraryInterfaceHelper;
 import entities.constants.OrbEnum;
 
 public class POALoader {
-	public static Library load(final String orbPort, final String orbHost, final String institution) throws UserException {
+	public static LibraryInterface load(final String orbPort, final String orbHost, final String institution) throws UserException {
 		// create and initialize the ORB
 		String[] args = new String[] { OrbEnum.ORB_INITIAL_PORT_ARG.val(), orbPort, OrbEnum.ORB_INITIAL_HOST_ARG.val(), orbHost};
 		ORB orb = ORB.init(args, null);
@@ -23,6 +22,6 @@ public class POALoader {
 		NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
 		
 		// resolve the Object Reference in Naming
-		return LibraryHelper.narrow(ncRef.resolve_str(institution));
+		return LibraryInterfaceHelper.narrow(ncRef.resolve_str(institution));
 	}
 }

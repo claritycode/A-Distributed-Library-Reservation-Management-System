@@ -1,42 +1,24 @@
 package rm;
 
 import idl.Library;
-import idl.LibraryHelper;
-import idl.ReplicaManager;
-import idl.ReplicaManagerHelper;
-import idl.ReplicaManagerPOA;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.UserException;
-import org.omg.CORBA.ORBPackage.InvalidName;
-import org.omg.CosNaming.NameComponent;
-import org.omg.CosNaming.NamingContextExt;
-import org.omg.CosNaming.NamingContextExtHelper;
 import org.omg.PortableServer.POA;
-import org.omg.PortableServer.POAHelper;
 
-import rm.constants.OrbEnum;
-import rm.constants.PropertiesEnum;
-import server.LibraryPOAImpl;
+import DRMSServices.LibraryInterface;
 
-public class ReplicaManagerPOAImpl extends ReplicaManagerPOA {
+public class ReplicaManagerImpl implements ReplicaManager {
 
 	private final String rmId;
-	private final Map<String, Library> replicas;
+	private final Map<String, LibraryInterface> replicas;
 	private final Map<String, String> properties;
 	private final ORB orb;
 	private final POA rootpoa;
 
-	public ReplicaManagerPOAImpl(final String rmId, final Map<String, Library> replicas, final Map<String, String> properties, 
+	public ReplicaManagerImpl(final String rmId, final Map<String, LibraryInterface> replicas, final Map<String, String> properties, 
 			final ORB orb, final POA rootpoa) {
 		this.rmId = rmId;
 		this.replicas = replicas;
@@ -68,23 +50,22 @@ public class ReplicaManagerPOAImpl extends ReplicaManagerPOA {
 		}
 	}
 
-	@Override
-	public void sendHeartBeats() {
+	public void launchHeartBeats() {
 		// FIXME - erase - add correct implementation instead
 		System.out.println("step 2");
-		for (Map.Entry<String, Library> entry : replicas.entrySet()) {
+		for (Map.Entry<String, LibraryInterface> entry : replicas.entrySet()) {
 			System.out.println(entry.getKey() + " ==> " + entry.getValue().setDuration("w1", "BonesOfTheLost", 1));
 		}
 	}
 
 	@Override
-	public String processHeartBeat(String educationalInstitution) {
+	public boolean processHeartBeat(String educationalInstitution) {
 		// TODO Auto-generated method stub
-		return null;
+		return false;
 	}
 
 	@Override
-	public boolean getCrashAgreement(int crashedRMId, int notifierRMId) {
+	public boolean processCrashAgreement(String crashedReplicaName, String crashedRmId, String notifierRmId) {
 		// TODO Auto-generated method stub
 		return false;
 	}

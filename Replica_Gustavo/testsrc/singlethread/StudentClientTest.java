@@ -1,12 +1,11 @@
 package singlethread;
 
-import idl.Library;
-
 import java.util.Map;
 
 import org.omg.CORBA.UserException;
 
 import ui.UserUI;
+import DRMSServices.LibraryInterface;
 import client.POALoader;
 import client.StudentClient;
 import entities.constants.PropertiesEnum;
@@ -15,11 +14,11 @@ public class StudentClientTest {
 	
 	private StudentClient loadClient() throws UserException {
 		String institution = "concordia";
-		Library poa = loadPoa(institution);
+		LibraryInterface poa = loadPoa(institution);
 		return new StudentClient("test1", "password", institution, poa);
 	}
 	
-	protected Library loadPoa(String institution) throws UserException {
+	protected LibraryInterface loadPoa(String institution) throws UserException {
 		Map<String, String> properties = UserUI.loadProperties();
 		String port = properties.get(PropertiesEnum.ORB_INITIAL_PORT.val());
 		String host = properties.get(PropertiesEnum.ORB_INITIAL_HOST.val());

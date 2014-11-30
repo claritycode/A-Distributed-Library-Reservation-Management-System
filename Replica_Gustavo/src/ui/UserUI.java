@@ -1,7 +1,5 @@
 package ui;
 
-import idl.Library;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +11,7 @@ import java.util.Scanner;
 
 import org.omg.CORBA.UserException;
 
+import DRMSServices.LibraryInterface;
 import client.Client;
 import client.POALoader;
 import entities.User;
@@ -104,7 +103,7 @@ public abstract class UserUI<T extends User, K extends Client<T>> {
 		return libraryName;
 	}
 	
-	protected Library loadServer(String institution) throws UserException {
+	protected LibraryInterface loadServer(String institution) throws UserException {
 		String port = properties.get(PropertiesEnum.ORB_INITIAL_PORT.val());
 		String host = properties.get(PropertiesEnum.ORB_INITIAL_HOST.val());
 		

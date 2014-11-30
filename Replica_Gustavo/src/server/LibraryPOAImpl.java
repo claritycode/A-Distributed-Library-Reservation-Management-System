@@ -1,22 +1,25 @@
 package server;
 
-import idl.LibraryPOA;
-
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
+import DRMSServices.LibraryInterfacePOA;
+import DRMSServices.nonReturners;
 import service.LibraryService;
 import service.LibraryServiceImpl;
+import util.NonReturnersParser;
 import entities.Book;
 import entities.Student;
 import entities.constants.PropertiesEnum;
 import entities.constants.UdpEnum;
 
-public class LibraryPOAImpl extends LibraryPOA {
+public class LibraryPOAImpl extends LibraryInterfacePOA {
 	private final Logger LOGGER;
 
 	private final String name;
@@ -117,37 +120,51 @@ public class LibraryPOAImpl extends LibraryPOA {
 					message = reserveFromExternal(params[0], params[1], params[2]);
 				} else if (methodName.equals(UdpEnum.GET_NON_RETURNERS.name())) {
 					int numDays = Integer.parseInt(params[0]);
-					message = getNonRetuners(null, null, educationalInstitution, numDays);
+					nonReturners[] nrs = getNonReturners(null, null, educationalInstitution, numDays);
+					if ((nrs != null) && (nrs.length > 0)) {
+						message = "";
+						for (nonReturners nr : nrs) {
+							message += NonReturnersParser.nonReturnersToString(nr) + "\n";
+						}
+					}
 				}
 			}
 		}
 		
 		return message;
 	}
+	
+	private boolean isSuccess(final String message) {
+		boolean success = false;
+		if (message != null && message.startsWith(LibraryService.SUCCESS)) {
+			success = true;
+		}
+		return success;
+	}
 
 	@Override
-	public String createAccount(String firstName, String lastName, String emailAddress, String phoneNumber, String username,
+	public boolean createAccount(String firstName, String lastName, String emailAddress, String phoneNumber, String username,
 			String password, String educationalInstitution) {
 		Student student = new Student(username, password, educationalInstitution, firstName, lastName, emailAddress, phoneNumber);
 		String message = service.createAccount(student);
 		LOGGER.info("createAccount result: " + message);
 
-		return message;
+		return isSuccess(message);
 	}
 
 	@Override
-	public String reserveBook(String username, String password, String bookName, String authorName) {
+	public boolean reserveBook(String username, String password, String bookName, String authorName) {
 		Student student = new Student(username, password, this.name);
 		Book book = new Book(bookName, authorName);
 
 		String message = service.reserveBook(student, book);
 		LOGGER.info("reserveBook result: " + message);
 
-		return message;
+		return isSuccess(message);
 	}
 
 	@Override
-	public String reserveInterLibrary(String username, String password, String bookName, String authorName) {
+	public boolean reserveInterLibrary(String username, String password, String bookName, String authorName) {
 		Student student = new Student(username, password, this.name);
 		Book book = new Book(bookName, authorName);
 		boolean reserved = false;
@@ -191,7 +208,7 @@ public class LibraryPOAImpl extends LibraryPOA {
 		
 		LOGGER.info("reserveInterLibrary result: " + message);		
 		
-		return message;
+		return isSuccess(message);
 	}
 	
 	private boolean bookInexistentLocally(final String message) {
@@ -220,16 +237,11 @@ public class LibraryPOAImpl extends LibraryPOA {
 	}
 
 	@Override
-	public String getNonRetuners(String adminUsername, String adminPassword, String educationalInstitution, int numDays) {
-		StringBuffer sb = new StringBuffer();
-		sb.append("\n" + name + ": ");
-		String result = service.getNonRetuners(numDays);
-		sb.append(result);
-		if (result.length() == 0) {
-			sb.append("\n......");
-		} else {
-			sb.append("......");
-		}
+	public nonReturners[] getNonReturners(String adminUsername, String adminPassword, String educationalInstitution, int numDays) {
+		List<nonReturners> nrList = new ArrayList<>();
+		
+		nonReturners nr = service.getNonRetuners(numDays);
+		NonReturnersParser.nonReturnersToSingleLine(nr);
 		
 		String host = getProperty(PropertiesEnum.UDP_INITIAL_HOST);
 
@@ -242,20 +254,33 @@ public class LibraryPOAImpl extends LibraryPOA {
 					int port = entry.getKey();
 					LOGGER.debug("Calling sendUdpRequest() from client: " + name + " on " + host + ":" + port);
 					String clientMsg = buildUdpMsg(UdpEnum.GET_NON_RETURNERS, Integer.toString(numDays));
-					sb.append(UDPClient.sendUdpRequest(host, port, clientMsg));
+					String nonReturnerResponse = UDPClient.sendUdpRequest(host, port, clientMsg);
+					nrList.add(NonReturnersParser.singleLineToNonReturners(nonReturnerResponse));
 				}
 			}
 		}
 		LOGGER.info("Got non-returners for: adminUsername = " + adminUsername + "\teducationalInstitution = "
 				+ educationalInstitution + "\tnumDays = " + numDays);
-		return sb.toString();
+		return nrList.toArray(new nonReturners[nrList.size()]);
 	}
 
 	@Override
-	public String setDuration(String username, String bookName, int num_of_days) {
+	public boolean setDuration(String username, String bookName, int num_of_days) {
 		String message = service.setDuration(username, bookName, num_of_days);
 		LOGGER.info("setDuration result: " + message);
-		return message;
+		return isSuccess(message);
+	}
+
+	@Override
+	public void shutDown() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setByzantineFlag(boolean byzantineFlag) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

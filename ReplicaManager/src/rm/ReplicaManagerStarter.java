@@ -2,8 +2,6 @@ package rm;
 
 import idl.Library;
 import idl.LibraryHelper;
-import idl.ReplicaManager;
-import idl.ReplicaManagerHelper;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -17,12 +15,13 @@ import java.util.Properties;
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.UserException;
 import org.omg.CORBA.ORBPackage.InvalidName;
-import org.omg.CosNaming.NameComponent;
 import org.omg.CosNaming.NamingContextExt;
 import org.omg.CosNaming.NamingContextExtHelper;
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAHelper;
 
+import DRMSServices.LibraryInterface;
+import DRMSServices.LibraryInterfaceHelper;
 import rm.constants.OrbEnum;
 import rm.constants.PropertiesEnum;
 
@@ -42,30 +41,20 @@ public class ReplicaManagerStarter {
 				ORB orb = getORB(properties);
 				POA rootpoa = getRootPOA(orb);
 
-				final Map<String, Library> replicas = loadReplicas(orb, args[1], args[2], args[3]);
+				final Map<String, LibraryInterface> replicas = loadReplicas(orb, args[1], args[2], args[3]);
 
 				// create servant and register it with the ORB
-				final ReplicaManagerPOAImpl impl = new ReplicaManagerPOAImpl(rmId, replicas, properties, orb, rootpoa);
-
-				// get object reference from the servant
-				org.omg.CORBA.Object ref = rootpoa.servant_to_reference(impl);
-				ReplicaManager rmRef = ReplicaManagerHelper.narrow(ref);
-
-				NamingContextExt ncRef = getNamingContextExt(orb);
-
-				// bind the Object Reference in Naming
-				NameComponent[] path = ncRef.to_name(rmId);
-				ncRef.rebind(path, rmRef);
+				final ReplicaManagerImpl impl = new ReplicaManagerImpl(rmId, replicas, properties, orb, rootpoa);
 
 				// FIXME - erase
 				System.out.println("step 1");
-				impl.sendHeartBeats();
+				impl.launchHeartBeats();
 
 				System.out.println("step 3");
 				impl.handleFailure(args[1], rmId);
 				// end of erase
 
-				System.out.println("Replica Manager POA is ready: " + rmId);
+				// FIXME - orb should be generated in a external job (once for all projects)
 				orb.run();
 			} else {
 				System.err.println("Please provide args as defined in the instructions.");
@@ -119,12 +108,6 @@ public class ReplicaManagerStarter {
 				+ "names as other 3 arguments. e.g.: rm1 concordia1 vanier2 webster1");
 	}
 
-	private static String[] buildOrgArgs(Map<String, String> properties) {
-		String port = properties.get(PropertiesEnum.ORB_INITIAL_PORT.val());
-		String host = properties.get(PropertiesEnum.ORB_INITIAL_HOST.val());
-		return new String[] { OrbEnum.ORB_INITIAL_PORT_ARG.val(), port, OrbEnum.ORB_INITIAL_HOST_ARG.val(), host };
-	}
-
 	/**
 	 * Create and initialize the ORB
 	 * @param properties
@@ -157,20 +140,20 @@ public class ReplicaManagerStarter {
 		return NamingContextExtHelper.narrow(objRef);
 	}
 
-	private static Map<String, Library> loadReplicas(final ORB orb, String... replicaNames) throws UserException {
+	private static Map<String, LibraryInterface> loadReplicas(final ORB orb, String... replicaNames) throws UserException {
 		// FIXME - create replicas on RM start, instead of loading externally
-		Map<String, Library> replicas = new HashMap<String, Library>();
+		Map<String, LibraryInterface> replicas = new HashMap<String, LibraryInterface>();
 		for (String name : replicaNames) {
 			replicas.put(name, loadLibrary(orb, name));
 		}
 		return replicas;
 	}
 
-	private static Library loadLibrary(final ORB orb, final String institution) throws UserException {
+	private static LibraryInterface loadLibrary(final ORB orb, final String institution) throws UserException {
 		NamingContextExt ncRef = getNamingContextExt(orb);
 
 		// resolve the Object Reference in Naming
-		return LibraryHelper.narrow(ncRef.resolve_str(institution));
+		return LibraryInterfaceHelper.narrow(ncRef.resolve_str(institution));
 	}
 
 }

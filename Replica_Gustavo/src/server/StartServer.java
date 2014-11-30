@@ -1,8 +1,5 @@
 package server;
 
-import idl.Library;
-import idl.LibraryHelper;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +16,8 @@ import org.omg.CosNaming.NamingContextExtHelper;
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAHelper;
 
+import DRMSServices.LibraryInterface;
+import DRMSServices.LibraryInterfaceHelper;
 import entities.constants.OrbEnum;
 import entities.constants.PropertiesEnum;
 
@@ -48,7 +47,7 @@ public class StartServer {
 				
 				// get object reference from the servant
 				org.omg.CORBA.Object ref = rootpoa.servant_to_reference(impl);
-				Library lref = LibraryHelper.narrow(ref);
+				LibraryInterface lref = LibraryInterfaceHelper.narrow(ref);
 				
 				// get the root naming context
 				// NameService invokes the name service

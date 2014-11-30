@@ -11,6 +11,8 @@ import org.omg.CosNaming.NameComponent;
 import org.omg.CosNaming.NamingContextExt;
 import org.omg.PortableServer.POA;
 
+import DRMSServices.LibraryInterface;
+import DRMSServices.LibraryInterfaceHelper;
 import server.LibraryPOAImpl;
 
 public class ReplicaFactory {
@@ -21,14 +23,14 @@ public class ReplicaFactory {
 		ncRef.unbind(path);
 	}
 
-	public static Library createReplica(final String replicaName, Map<String, String> properties, final POA rootpoa, final ORB orb)
+	public static LibraryInterface createReplica(final String replicaName, Map<String, String> properties, final POA rootpoa, final ORB orb)
 			throws UserException {
 		// create servant and register it with the ORB
 		LibraryPOAImpl impl = new LibraryPOAImpl(replicaName, properties);
 
 		// get object reference from the servant
 		org.omg.CORBA.Object ref = rootpoa.servant_to_reference(impl);
-		Library lref = LibraryHelper.narrow(ref);
+		LibraryInterface lref = LibraryInterfaceHelper.narrow(ref);
 
 		NamingContextExt ncRef = ReplicaManagerStarter.getNamingContextExt(orb);
 

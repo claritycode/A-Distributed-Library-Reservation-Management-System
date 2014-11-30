@@ -9,6 +9,9 @@ import java.util.Properties ;
 
 import org.omg.CosNaming.NameComponent;
 
+import DRMSServices.LibraryInterface;
+import DRMSServices.LibraryInterfaceHelper;
+
 /**
  * @author Parth Patel
  * A non GUI client interface to use the library services

@@ -9,6 +9,8 @@ import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import DRMSServices.lateStudent;
+import DRMSServices.nonReturners;
 import entities.Book;
 import entities.Reservation;
 import entities.Student;
@@ -203,27 +205,6 @@ public class LibraryServiceImpl implements LibraryService {
 		return message;
 	}
 	
-	public String isBookAvailable(final Book book) {
-		String message = null;
-		
-		// use only book name as key instead of hash code (with name and author) because author is not passed on setDuration()
-		final Book retrievedBook = books.get(book.getName());
-		if (retrievedBook != null) {
-			// lock saved book during search-change
-			synchronized (retrievedBook) {
-				int copies = retrievedBook.getCopies();
-				if (copies > 0) {
-					message = String.format(BOOK_AVAILABLE, book);
-				} else {
-					message = String.format(NO_COPIES, book);
-				}
-			}
-		} else {
-			message = String.format(INEXISTENT_BOOK, book);
-		}
-		return message;
-	}
-	
 	@Override
 	public String reserveBookExternal(final String username, final Book book) {
 		String message = null;
@@ -285,21 +266,25 @@ public class LibraryServiceImpl implements LibraryService {
 	}
 
 	@Override
-	public String getNonRetuners(final int numDays) {
-		StringBuffer sb = new StringBuffer();
+	public nonReturners getNonRetuners(final int numDays) {
+		nonReturners nr = new nonReturners();
+		List<lateStudent> lateList = new ArrayList<lateStudent>();
+		
 		for (LinkedHashMap<String, Student> studentsList : accounts.values()) {
 			// locking list to avoid internal change during search
 			synchronized (studentsList) {
 				for (final Student student : studentsList.values()) {
 					synchronized (student) {
 						if (isNonReturner(student, numDays)) {
-							sb.append(student.getFirstName() + " " + student.getLastName() + " " + student.getPhone() + "\n");
+							lateList.add(new lateStudent(student.getFirstName(), student.getLastName(), student.getPhone()));
 						}
 					}
 				}
 			}
 		}
-		return sb.toString();
+		nr.studentList = lateList.toArray(new lateStudent[lateList.size()]);
+		nr.universityName = this.libraryName;
+		return nr;
 	}
 	
 	/**

@@ -1,4 +1,4 @@
-package rm.dummy;
+package rm;
 
 public interface ReplicaManager {
 

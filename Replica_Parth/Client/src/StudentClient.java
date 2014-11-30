@@ -1,6 +1,11 @@
 import java.io.* ;
+
 import org.omg.CORBA.*;
 import org.omg.CosNaming.*;
+
+import DRMSServices.LibraryInterface;
+import DRMSServices.LibraryInterfaceHelper;
+
 import java.util.Properties ;
 
 /**
