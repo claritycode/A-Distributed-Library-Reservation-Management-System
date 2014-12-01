@@ -1,8 +1,11 @@
 package rm;
 
+import java.util.Map;
+
 public interface ReplicaManager {
 	
 	String getRmId();
+	Map<String, Integer> getRMUDPPorts();
 
 	/**
 	 * Process failure notification from the Front End. If the same replica produces incorrect results for three 
@@ -12,11 +15,6 @@ public interface ReplicaManager {
 	 * @param rmId
 	 */
 	void handleFailure(String replicaName, String rmId);
-	
-	/**
-	 * Launch heartbeats to other replica managers to check if their replicas are alive.
-	 */
-	void launchHeartBeats();
 	
 	/**
 	 * Process heartbeat from other ReplicaManager to check if a specific replica is alive.

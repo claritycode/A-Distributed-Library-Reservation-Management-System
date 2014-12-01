@@ -22,6 +22,8 @@ public class ReplicaFactory {
 
 	public static LibraryInterface createLibrary(final String libraryCorbaName, final String libraryName, final POA rootpoa, final ORB orb)
 			throws UserException {
+		System.out.println("createLibrary: binding library [" + libraryName + "] to corba with naming [" + libraryCorbaName + "]");
+		
 		// create servant and register it with the ORB
 		LibraryPOAImpl impl = new LibraryPOAImpl(libraryName); // FIXME - use any of the 3 implementations
 

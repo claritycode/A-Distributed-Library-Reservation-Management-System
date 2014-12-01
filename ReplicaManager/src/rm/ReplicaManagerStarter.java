@@ -22,7 +22,7 @@ import rm.constants.OrbEnum;
 import rm.constants.PropertiesEnum;
 
 public class ReplicaManagerStarter {
-	
+
 	public static final String CONFIG_PATH = "./resources/rmconfig.properties";
 	public static final String ROOT_POA = "RootPOA";
 
@@ -37,9 +37,10 @@ public class ReplicaManagerStarter {
 				ORB orb = getORB(properties);
 				POA rootpoa = getRootPOA(orb);
 
-				final List<String> libraryNames = Arrays.asList(new String[] {args[1], args[2], args[3]});
+				final List<String> libraryNames = Arrays.asList(new String[] { args[1], args[2], args[3] });
+				final Map<String, Integer> rmUDPPorts = getRMUDPPorts(properties);
 
-				final ReplicaManagerImpl impl = new ReplicaManagerImpl(rmId, libraryNames, orb, rootpoa);
+				final ReplicaManagerImpl impl = new ReplicaManagerImpl(rmId, libraryNames, rmUDPPorts, orb, rootpoa);
 
 				// FIXME - remove test class (TempClass)
 				Thread t = new Thread(new ReplicaManagerStarter().new TempClass(impl));
@@ -58,11 +59,11 @@ public class ReplicaManagerStarter {
 			System.out.println("Exiting Library Server ");
 		}
 	}
-	
+
 	// FIXME - erase TempClass
 	class TempClass implements Runnable {
 		ReplicaManagerImpl impl;
-		
+
 		TempClass(ReplicaManagerImpl impl) {
 			this.impl = impl;
 		}
@@ -71,22 +72,18 @@ public class ReplicaManagerStarter {
 		public void run() {
 			try {
 				Thread.sleep(2000);
-				
-				System.out.println("processHeartBeat 1: " + impl.processHeartBeat("concordia"));
-
 				System.out.println("handleFailure");
 				impl.handleFailure("concordia", this.impl.getRmId());
-				
+				System.out.println("concordia HB: " + impl.processHeartBeat("concordia"));
+				System.out.println("vanier HB: " + impl.processHeartBeat("vanier"));
+				System.out.println("webster HB: " + impl.processHeartBeat("webster"));
 				Thread.sleep(2000);
-				
-				System.out.println("processHeartBeat 2: " + impl.processHeartBeat("concordia"));
-				impl.launchHeartBeats();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
+
 		}
-		
+
 	}
 
 	private static Map<String, String> loadProperties() {
@@ -130,6 +127,7 @@ public class ReplicaManagerStarter {
 
 	/**
 	 * Create and initialize the ORB
+	 * 
 	 * @param properties
 	 * @return
 	 */
@@ -139,9 +137,10 @@ public class ReplicaManagerStarter {
 		String[] orbArgs = new String[] { OrbEnum.ORB_INITIAL_PORT_ARG.val(), port, OrbEnum.ORB_INITIAL_HOST_ARG.val(), host };
 		return ORB.init(orbArgs, null);
 	}
-	
+
 	/**
 	 * get reference to rootpoa & activate the POAManager
+	 * 
 	 * @param orb
 	 * @return
 	 * @throws UserException
@@ -158,6 +157,21 @@ public class ReplicaManagerStarter {
 		org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
 		// Use NamingContextExt which is part of the Interoperable Naming Service (INS) specification.
 		return NamingContextExtHelper.narrow(objRef);
+	}
+
+	private static Map<String, Integer> getRMUDPPorts(Map<String, String> properties) {
+		final Map<String, Integer> rmUDPPorts = new HashMap<String, Integer>();
+		String[] rmIds = properties.get(PropertiesEnum.RM_IDS.val()).split(",");
+		String[] rmUdpPorts = properties.get(PropertiesEnum.RM_UDP_PORTS.val()).split(",");
+		if (rmIds.length == rmUdpPorts.length) {
+			for (int i = 0; i < rmIds.length; i++) {
+				rmUDPPorts.put(rmIds[i], Integer.valueOf(rmUdpPorts[i]));
+			}
+		} else {
+			throw new IllegalArgumentException("Size of '" + PropertiesEnum.RM_IDS.val() + "' and '"
+					+ PropertiesEnum.RM_UDP_PORTS.val() + "' properties does not match");
+		}
+		return rmUDPPorts;
 	}
 
 }
