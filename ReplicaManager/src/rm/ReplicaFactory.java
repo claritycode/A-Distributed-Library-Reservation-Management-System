@@ -1,8 +1,5 @@
 package rm;
 
-import idl.Library;
-import idl.LibraryHelper;
-
 import java.util.Map;
 
 import org.omg.CORBA.ORB;
@@ -11,9 +8,9 @@ import org.omg.CosNaming.NameComponent;
 import org.omg.CosNaming.NamingContextExt;
 import org.omg.PortableServer.POA;
 
+import server.LibraryPOAImpl;
 import DRMSServices.LibraryInterface;
 import DRMSServices.LibraryInterfaceHelper;
-import server.LibraryPOAImpl;
 
 public class ReplicaFactory {
 

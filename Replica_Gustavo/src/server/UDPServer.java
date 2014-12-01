@@ -10,6 +10,8 @@ public class UDPServer implements Runnable {
 	private final String name;
 	private final int port;
 	private final LibraryPOAImpl poa;
+	DatagramSocket serverSocket = null;
+	private boolean isRunning = false;
 	
 	public UDPServer(final String name, final int port, final LibraryPOAImpl poa) {
 		this.name = name;
@@ -19,23 +21,23 @@ public class UDPServer implements Runnable {
 	
 	@Override
 	public void run() {
-		DatagramSocket serverSocket = null;
 		try {
 			serverSocket = new DatagramSocket(port);
+			isRunning = true;
 			System.out.println("Started UDP server for library [" + name + "] on port [" + port + "]");
 			byte[] receiveData = new byte[1024];
-			while(true) {
+			while(isRunning) {
 				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				serverSocket.receive(receivePacket);
 				DatagramPacket sendPacket = processReceivedPacket(receivePacket);
 				if (sendPacket != null) {
 					serverSocket.send(sendPacket);
 				}
-				//Thread.sleep(1);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
+			System.out.println("Existing udp server: " + name);
 			if (serverSocket != null) {
 				serverSocket.close();
 			}
@@ -58,6 +60,14 @@ public class UDPServer implements Runnable {
 			sendPacket = new DatagramPacket(sendData, sendData.length, clientIP, clientPort);
 		}
 		return sendPacket;
+	}
+	
+	/**
+	 * Close socket to release port used by server.
+	 */
+	public void unbindUdp() {
+		serverSocket.close();
+		isRunning = false;
 	}
 
 }

@@ -1,8 +1,5 @@
 package rm;
 
-import idl.Library;
-import idl.LibraryHelper;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,10 +17,10 @@ import org.omg.CosNaming.NamingContextExtHelper;
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAHelper;
 
-import DRMSServices.LibraryInterface;
-import DRMSServices.LibraryInterfaceHelper;
 import rm.constants.OrbEnum;
 import rm.constants.PropertiesEnum;
+import DRMSServices.LibraryInterface;
+import DRMSServices.LibraryInterfaceHelper;
 
 public class ReplicaManagerStarter {
 	

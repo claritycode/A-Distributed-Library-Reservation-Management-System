@@ -25,22 +25,24 @@ public class LibraryPOAImpl extends LibraryInterfacePOA {
 	private final String name;
 	private final LibraryService service;
 	private final UDPServer udpServer;
-	
+
 	private final Map<String, String> properties;
+
+	private boolean byzantineFlag;
 
 	public LibraryPOAImpl(final String institution, final Map<String, String> properties) {
 		this.name = institution;
-		System.setProperty("obj.log","./library_"+name+".log");
+		System.setProperty("obj.log", "./library_" + name + ".log");
 
 		this.properties = properties;
 		final int udpPort = new Integer(getLibraryProperty(PropertiesEnum.LIBRARY_UDP_PORT));
 		final String studentsCsv = getLibraryProperty(PropertiesEnum.LIBRARY_STUDENTS_FILE);
 		final String booksCsv = getLibraryProperty(PropertiesEnum.LIBRARY_BOOKS_FILE);
-		
+
 		this.service = new LibraryServiceImpl(studentsCsv, booksCsv, name);
-		
+
 		LOGGER = Logger.getLogger(LibraryPOAImpl.class);
-		
+
 		// start the udp server
 		this.udpServer = new UDPServer(institution, udpPort, this);
 		Thread t = new Thread(this.udpServer);
@@ -49,34 +51,34 @@ public class LibraryPOAImpl extends LibraryInterfacePOA {
 
 	public LibraryPOAImpl(final String institution, final Map<String, String> properties, final int udpPort) {
 		this.name = institution;
-		System.setProperty("obj.log","./library_"+name+".log");
+		System.setProperty("obj.log", "./library_" + name + ".log");
 
 		this.properties = properties;
 		final String studentsCsv = getLibraryProperty(PropertiesEnum.LIBRARY_STUDENTS_FILE);
 		final String booksCsv = getLibraryProperty(PropertiesEnum.LIBRARY_BOOKS_FILE);
-		
+
 		this.service = new LibraryServiceImpl(studentsCsv, booksCsv, name);
-		
+
 		LOGGER = Logger.getLogger(LibraryPOAImpl.class);
-		
+
 		// start the udp server
 		this.udpServer = new UDPServer(institution, udpPort, this);
 		Thread t = new Thread(this.udpServer);
 		t.start();
 	}
-	
+
 	public String getProperty(PropertiesEnum property) {
 		return this.properties.get(property.val());
 	}
-	
+
 	public String getLibraryProperty(PropertiesEnum property) {
 		return getLibraryProperty(name, property);
 	}
-	
-	public String getLibraryProperty(String library,PropertiesEnum property) {
+
+	public String getLibraryProperty(String library, PropertiesEnum property) {
 		return this.properties.get(library + "." + property.val());
 	}
-	
+
 	private String[] loadLibraryNames() {
 		String libraries = getProperty(PropertiesEnum.LIBRARIES);
 		if (libraries != null && libraries.length() > 0) {
@@ -85,7 +87,7 @@ public class LibraryPOAImpl extends LibraryInterfacePOA {
 			throw new IllegalArgumentException("Unable to load property 'libraries'. Please check your config.proprties file.");
 		}
 	}
-	
+
 	private Map<Integer, String> getPortLibraryMap() {
 		Map<Integer, String> map = new HashMap<Integer, String>();
 		String[] libraries = loadLibraryNames();
@@ -95,8 +97,8 @@ public class LibraryPOAImpl extends LibraryInterfacePOA {
 		}
 		return map;
 	}
-	
-	private String buildUdpMsg(UdpEnum method, String... params ) {
+
+	private String buildUdpMsg(UdpEnum method, String... params) {
 		String split = getProperty(PropertiesEnum.UDP_MSG_SPLIT);
 		String clientMsg = method.name() + split + name;
 		for (String s : params) {
@@ -104,18 +106,18 @@ public class LibraryPOAImpl extends LibraryInterfacePOA {
 		}
 		return clientMsg;
 	}
-	
+
 	public String processUdpClientMsg(final String clientMsg) {
 		String message = null;
-		
+
 		if (clientMsg != null && clientMsg.length() > 0) {
 			String[] msgArray = clientMsg.trim().split(getProperty(PropertiesEnum.UDP_MSG_SPLIT));
-			
+
 			if (msgArray != null && msgArray.length > 2) {
 				String methodName = msgArray[0];
 				String educationalInstitution = msgArray[1];
 				String[] params = Arrays.copyOfRange(msgArray, 2, msgArray.length);
-				
+
 				if (methodName.equals(UdpEnum.RESERVE_INTER_LIBRARY.name())) {
 					message = reserveFromExternal(params[0], params[1], params[2]);
 				} else if (methodName.equals(UdpEnum.GET_NON_RETURNERS.name())) {
@@ -130,10 +132,10 @@ public class LibraryPOAImpl extends LibraryInterfacePOA {
 				}
 			}
 		}
-		
+
 		return message;
 	}
-	
+
 	private boolean isSuccess(final String message) {
 		boolean success = false;
 		if (message != null && message.startsWith(LibraryService.SUCCESS)) {
@@ -145,77 +147,93 @@ public class LibraryPOAImpl extends LibraryInterfacePOA {
 	@Override
 	public boolean createAccount(String firstName, String lastName, String emailAddress, String phoneNumber, String username,
 			String password, String educationalInstitution) {
-		Student student = new Student(username, password, educationalInstitution, firstName, lastName, emailAddress, phoneNumber);
-		String message = service.createAccount(student);
-		LOGGER.info("createAccount result: " + message);
+		boolean result = false;
 
-		return isSuccess(message);
+		if (!byzantineFlag) {
+			Student student = new Student(username, password, educationalInstitution, firstName, lastName, emailAddress,
+					phoneNumber);
+			String message = service.createAccount(student);
+			LOGGER.info("createAccount result: " + message);
+			result = isSuccess(message);
+		}
+		return result;
 	}
 
 	@Override
 	public boolean reserveBook(String username, String password, String bookName, String authorName) {
-		Student student = new Student(username, password, this.name);
-		Book book = new Book(bookName, authorName);
+		boolean result = false;
 
-		String message = service.reserveBook(student, book);
-		LOGGER.info("reserveBook result: " + message);
+		if (!byzantineFlag) {
+			Student student = new Student(username, password, this.name);
+			Book book = new Book(bookName, authorName);
 
-		return isSuccess(message);
+			String message = service.reserveBook(student, book);
+			LOGGER.info("reserveBook result: " + message);
+			result = isSuccess(message);
+		}
+		return result;
 	}
 
 	@Override
 	public boolean reserveInterLibrary(String username, String password, String bookName, String authorName) {
-		Student student = new Student(username, password, this.name);
-		Book book = new Book(bookName, authorName);
-		boolean reserved = false;
+		boolean result = false;
 
-		String message = service.reserveBook(student, book);
-		if (bookInexistentLocally(message)) {
-			String host = getProperty(PropertiesEnum.UDP_INITIAL_HOST);
-			Map<Integer, String> portLibMap = getPortLibraryMap();
+		if (!byzantineFlag) {
+			Student student = new Student(username, password, this.name);
+			Book book = new Book(bookName, authorName);
+			boolean reserved = false;
 
-			for (Entry<Integer, String> entry : portLibMap.entrySet()) {
-				// only process other libraries (not current)
-				if (!this.name.equals(entry.getValue())) {
-					String externalLib = entry.getValue();
-					int port = entry.getKey();
-					// do pre-reservation
-					String preReservationMsg = service.addExternalReservationToLocalUser(username, book, externalLib);
-					LOGGER.debug("Pre-reservation of book [" + book + "] for user [" + username + "] on library [" + externalLib + "]");
-					
-					// check if preReservationMsg was successful
-					if (hasReserved(preReservationMsg)) {
-						LOGGER.debug("Calling reserveInterLibrary() from client: " + name + " on " + host + ":" + port);
-						String clientMsg = buildUdpMsg(UdpEnum.RESERVE_INTER_LIBRARY, username, bookName, authorName);
-						final String libraryMsg = UDPClient.sendUdpRequest(host, port, clientMsg);
-						if (hasReserved(libraryMsg)) {
-							// successful reservation:
-							message = libraryMsg.trim();
-							reserved = true;
-							break;
-						} else {
-							// undo pre-reservation
-							preReservationMsg = service.removeFailedExternalReservation(username, book);
-							LOGGER.debug("Reverting pre-reservation of book [" + book + "] for user [" + username + "] on library [" + externalLib + "]");
+			String message = service.reserveBook(student, book);
+			if (bookInexistentLocally(message)) {
+				String host = getProperty(PropertiesEnum.UDP_INITIAL_HOST);
+				Map<Integer, String> portLibMap = getPortLibraryMap();
+
+				for (Entry<Integer, String> entry : portLibMap.entrySet()) {
+					// only process other libraries (not current)
+					if (!this.name.equals(entry.getValue())) {
+						String externalLib = entry.getValue();
+						int port = entry.getKey();
+						// do pre-reservation
+						String preReservationMsg = service.addExternalReservationToLocalUser(username, book, externalLib);
+						LOGGER.debug("Pre-reservation of book [" + book + "] for user [" + username + "] on library ["
+								+ externalLib + "]");
+
+						// check if preReservationMsg was successful
+						if (hasReserved(preReservationMsg)) {
+							LOGGER.debug("Calling reserveInterLibrary() from client: " + name + " on " + host + ":" + port);
+							String clientMsg = buildUdpMsg(UdpEnum.RESERVE_INTER_LIBRARY, username, bookName, authorName);
+							final String libraryMsg = UDPClient.sendUdpRequest(host, port, clientMsg);
+							if (hasReserved(libraryMsg)) {
+								// successful reservation:
+								message = libraryMsg.trim();
+								reserved = true;
+								break;
+							} else {
+								// undo pre-reservation
+								preReservationMsg = service.removeFailedExternalReservation(username, book);
+								LOGGER.debug("Reverting pre-reservation of book [" + book + "] for user [" + username
+										+ "] on library [" + externalLib + "]");
+							}
 						}
 					}
 				}
+				if (!reserved) {
+					message = "Unable to reserve inter-library";
+				}
 			}
-			if (!reserved) {
-				message = "Unable to reserve inter-library";
-			}
+
+			LOGGER.info("reserveInterLibrary result: " + message);
+
+			result = isSuccess(message);
 		}
-		
-		LOGGER.info("reserveInterLibrary result: " + message);		
-		
-		return isSuccess(message);
+		return result;
 	}
-	
+
 	private boolean bookInexistentLocally(final String message) {
-		return (message != null) && 
-				((message.contains(LibraryService.INEXISTENT_BOOK_INIT)) || (message.contains(LibraryService.NO_COPIES_INIT)));
+		return (message != null)
+				&& ((message.contains(LibraryService.INEXISTENT_BOOK_INIT)) || (message.contains(LibraryService.NO_COPIES_INIT)));
 	}
-	
+
 	private boolean hasReserved(final String libraryMsg) {
 		boolean wasSuccess = false;
 		if ((libraryMsg != null) && (libraryMsg.contains(LibraryService.BOOK_RESERVED_INIT))) {
@@ -223,9 +241,10 @@ public class LibraryPOAImpl extends LibraryInterfacePOA {
 		}
 		return wasSuccess;
 	}
-	
+
 	/**
-	 * Process reservation request from other library. 
+	 * Process reservation request from other library.
+	 * 
 	 * @param username
 	 * @param bookName
 	 * @param authorName
@@ -238,49 +257,55 @@ public class LibraryPOAImpl extends LibraryInterfacePOA {
 
 	@Override
 	public nonReturners[] getNonReturners(String adminUsername, String adminPassword, String educationalInstitution, int numDays) {
-		List<nonReturners> nrList = new ArrayList<>();
-		
-		nonReturners nr = service.getNonRetuners(numDays);
-		NonReturnersParser.nonReturnersToSingleLine(nr);
-		
-		String host = getProperty(PropertiesEnum.UDP_INITIAL_HOST);
+		nonReturners[] result = null;
+		if (!byzantineFlag) {
+			List<nonReturners> nrList = new ArrayList<>();
 
-		// if request was to this institution, call other servers
-		if (this.name.equals(educationalInstitution)) {
-			Map<Integer, String> portLibMap = getPortLibraryMap();
-			for (Entry<Integer, String> entry : portLibMap.entrySet()) {
-				// only process other libraries (not current)
-				if (!this.name.equals(entry.getValue())) {
-					int port = entry.getKey();
-					LOGGER.debug("Calling sendUdpRequest() from client: " + name + " on " + host + ":" + port);
-					String clientMsg = buildUdpMsg(UdpEnum.GET_NON_RETURNERS, Integer.toString(numDays));
-					String nonReturnerResponse = UDPClient.sendUdpRequest(host, port, clientMsg);
-					nrList.add(NonReturnersParser.singleLineToNonReturners(nonReturnerResponse));
+			nonReturners nr = service.getNonRetuners(numDays);
+			NonReturnersParser.nonReturnersToSingleLine(nr);
+
+			String host = getProperty(PropertiesEnum.UDP_INITIAL_HOST);
+
+			// if request was to this institution, call other servers
+			if (this.name.equals(educationalInstitution)) {
+				Map<Integer, String> portLibMap = getPortLibraryMap();
+				for (Entry<Integer, String> entry : portLibMap.entrySet()) {
+					// only process other libraries (not current)
+					if (!this.name.equals(entry.getValue())) {
+						int port = entry.getKey();
+						LOGGER.debug("Calling sendUdpRequest() from client: " + name + " on " + host + ":" + port);
+						String clientMsg = buildUdpMsg(UdpEnum.GET_NON_RETURNERS, Integer.toString(numDays));
+						String nonReturnerResponse = UDPClient.sendUdpRequest(host, port, clientMsg);
+						nrList.add(NonReturnersParser.singleLineToNonReturners(nonReturnerResponse));
+					}
 				}
 			}
+			LOGGER.info("Got non-returners for: adminUsername = " + adminUsername + "\teducationalInstitution = "
+					+ educationalInstitution + "\tnumDays = " + numDays);
+			result = nrList.toArray(new nonReturners[nrList.size()]);
 		}
-		LOGGER.info("Got non-returners for: adminUsername = " + adminUsername + "\teducationalInstitution = "
-				+ educationalInstitution + "\tnumDays = " + numDays);
-		return nrList.toArray(new nonReturners[nrList.size()]);
+		return result;
 	}
 
 	@Override
 	public boolean setDuration(String username, String bookName, int num_of_days) {
-		String message = service.setDuration(username, bookName, num_of_days);
-		LOGGER.info("setDuration result: " + message);
-		return isSuccess(message);
+		boolean result = false;
+		if (!byzantineFlag) {
+			String message = service.setDuration(username, bookName, num_of_days);
+			LOGGER.info("setDuration result: " + message);
+			result = isSuccess(message);
+		}
+		return result;
 	}
 
 	@Override
 	public void shutDown() {
-		// TODO Auto-generated method stub
-		
+		udpServer.unbindUdp();
 	}
 
 	@Override
 	public void setByzantineFlag(boolean byzantineFlag) {
-		// TODO Auto-generated method stub
-		
+		this.byzantineFlag = byzantineFlag;
 	}
 
 }
