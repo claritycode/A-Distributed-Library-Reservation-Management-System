@@ -4,14 +4,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.UserException;
 import org.omg.PortableServer.POA;
 
 import rm.constants.UdpEnum;
-import rm.udp.RMUDPClient;
 import rm.udp.RMUDPServer;
 import DRMSServices.LibraryInterface;
 
@@ -25,23 +23,20 @@ public class ReplicaManagerImpl implements ReplicaManager {
 	private final POA rootpoa;
 	private final Map<String, Integer> rmUDPPorts;
 	private final RMUDPServer udpServer;
+	private final HeartBeatDispatcher hearBeat;
 
-	public ReplicaManagerImpl(final String rmId, final List<String> libraryNames, final ORB orb, final POA rootpoa)
+	public ReplicaManagerImpl(final String rmId, final List<String> libraryNames, final Map<String, Integer> rmUDPPorts, final ORB orb, final POA rootpoa)
 			throws UserException {
 		this.rmId = rmId;
 		this.orb = orb;
 		this.rootpoa = rootpoa;
 		this.libraries = new HashMap<String, LibraryInterface>();
 		this.startLibraries(libraryNames);
-		// FIXME - get from properties
-		this.rmUDPPorts = new HashMap<String, Integer>();
-		rmUDPPorts.put("rm1", 10101);
-		rmUDPPorts.put("rm2", 10102);
+		this.rmUDPPorts = rmUDPPorts;
 		
-		// // start the udp server
-		this.udpServer = new RMUDPServer(rmUDPPorts.get(rmId), this);
-		Thread t = new Thread(this.udpServer);
-		t.start();
+		// create and start the udp server
+		this.udpServer = startUdpServer();
+		this.hearBeat = startHeartBeatDispatcher();
 	}
 
 	private void startLibraries(final List<String> libraryNames) throws UserException {
@@ -49,6 +44,26 @@ public class ReplicaManagerImpl implements ReplicaManager {
 			LibraryInterface library = ReplicaFactory.createLibrary(getLibraryCorbaName(libraryName), libraryName, rootpoa, orb);
 			this.libraries.put(libraryName, library);
 		}
+	}
+	
+	private RMUDPServer startUdpServer() {
+		RMUDPServer rmUdpServer = null;
+		if (this.udpServer == null) {
+			rmUdpServer = new RMUDPServer(rmUDPPorts.get(rmId), this);
+			Thread t = new Thread(rmUdpServer);
+			t.start();
+		}
+		return rmUdpServer;
+	}
+	
+	private HeartBeatDispatcher startHeartBeatDispatcher() {
+		HeartBeatDispatcher dispatcher = null;
+		if (this.hearBeat == null) {
+			dispatcher = new HeartBeatDispatcher(this, this.libraries.keySet());
+			Thread t = new Thread(dispatcher);
+			t.start();
+		}
+		return dispatcher;
 	}
 	
 	private String getLibraryCorbaName(final String libraryName) {
@@ -73,19 +88,6 @@ public class ReplicaManagerImpl implements ReplicaManager {
 			ReplicaFactory.createLibrary(libraryCorbaName, educationalInstitution, rootpoa, orb);
 		} catch (UserException e) {
 			e.printStackTrace();
-		}
-	}
-
-	public void launchHeartBeats() {
-		for (Entry<String, Integer> entry : rmUDPPorts.entrySet()) {
-			if (!entry.getKey().equals(this.rmId)) {
-				for (String libraryName : libraries.keySet()) {
-					String clientMsg = buildUdpMsg(UdpEnum.HEART_BEAT, libraryName);
-					String heartBeat = RMUDPClient.sendUdpRequest("localhost", entry.getValue(), clientMsg);
-					// FIXME - process heartBeat
-					System.out.println("heartBeat for [" + libraryName + "] in [" + entry.getKey() + "]  = " + heartBeat);
-				}
-			}
 		}
 	}
 
@@ -129,18 +131,15 @@ public class ReplicaManagerImpl implements ReplicaManager {
 
 		return message;
 	}
-
-	private String buildUdpMsg(UdpEnum method, String... params) {
-		String clientMsg = method.name() + UDP_MSG_SPLIT + rmId;
-		for (String s : params) {
-			clientMsg += UDP_MSG_SPLIT + s;
-		}
-		return clientMsg;
-	}
 	
 	@Override
 	public String getRmId() {
 		return this.rmId;
+	}
+	
+	@Override
+	public Map<String, Integer> getRMUDPPorts() {
+		return this.rmUDPPorts;
 	}
 
 }

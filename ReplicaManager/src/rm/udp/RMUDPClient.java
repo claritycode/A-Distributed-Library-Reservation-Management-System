@@ -5,6 +5,9 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
+import rm.ReplicaManagerImpl;
+import rm.constants.UdpEnum;
+
 public class RMUDPClient {
 
 	public static final int BYTES = 1024;
@@ -30,5 +33,13 @@ public class RMUDPClient {
 			message = "\nERROR on UDP call on " + host + ":" + serverPort + "\n......";
 		}
 		return message;
+	}
+
+	public static String buildUdpMsg(final String rmId, final UdpEnum method, final String... params) {
+		String clientMsg = method.name() + ReplicaManagerImpl.UDP_MSG_SPLIT + rmId;
+		for (String s : params) {
+			clientMsg += ReplicaManagerImpl.UDP_MSG_SPLIT + s;
+		}
+		return clientMsg;
 	}
 }

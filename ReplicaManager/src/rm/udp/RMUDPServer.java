@@ -23,8 +23,9 @@ public class RMUDPServer implements Runnable {
 		try {
 			serverSocket = new DatagramSocket(port);
 			System.out.println("Started UDP server for RM [" + rm.getRmId() + "] on port [" + port + "]");
-			byte[] receiveData = new byte[1024];
 			while(true) {
+				// fyi: byte[] needs to be recreated every time to avoid mixing up with data of other requests
+				byte[] receiveData = new byte[1024]; 
 				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				serverSocket.receive(receivePacket);
 				DatagramPacket sendPacket = processReceivedPacket(receivePacket);
