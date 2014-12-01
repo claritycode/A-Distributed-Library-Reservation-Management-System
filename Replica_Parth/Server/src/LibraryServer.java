@@ -3,7 +3,7 @@ import org.omg.CORBA.*;
 import org.omg.PortableServer.*;
 import org.omg.PortableServer.POAManagerPackage.AdapterInactive;
 import org.omg.CosNaming.*;
-//import org.omg.CosNaming.NamingContextPackage.*;
+import DRMSServices.* ;
 
 import java.util.Properties;
 
@@ -72,27 +72,6 @@ public class LibraryServer {
 		} catch ( org.omg.CORBA.UserException e) {
 			System.out.println ( e.getMessage() ) ;
 		} 
-		
-		// Create few Books
-		libraries[0].addBook("CM", "CM", 1) ;
-		libraries[0].addBook("CV", "CV", 1) ;
-		libraries[1].addBook( "MV", "MV", 1 ) ;
-		libraries[1].addBook("CM", "CM", 1) ;
-		libraries[2].addBook("CV", "CV", 1) ;
-		libraries[2].addBook("MV", "MV", 1) ;
-		libraries[0].addBook("name0", "author0", 1) ;
-		libraries[1].addBook("name0", "author0", 1) ;
-		libraries[2].addBook("name0", "author0", 1) ;
-				
-		// Executing a thread on each library
-		// Thus each library can now provide service to other libraries through UDP messages
-		Thread concordiaServer = new Thread ( libraries[0] ) ;
-		Thread mcgillServer = new Thread ( libraries[1] ) ;
-		Thread vanierServer = new Thread ( libraries[2] ) ;
-		
-		concordiaServer.start() ;
-		mcgillServer.start();
-		vanierServer.start();
 		
 		System.out.println("The following three Libraries are currently part of the DRMS");
 		System.out.println("1. Concordia University");

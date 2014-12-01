@@ -73,6 +73,10 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 			studentFiles.deleteOnExit();
 			
 			studentFiles.mkdir();	// Create directory
+			
+			// Start UDP Server
+			Thread UDPServer = new Thread ( this ) ;
+			UDPServer.start();
 		}catch ( IOException e ) {
 			System.out.println ( e.getMessage() ) ;
 		}
