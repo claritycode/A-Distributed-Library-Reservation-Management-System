@@ -25,10 +25,10 @@ public class NonReturnersParser {
 	public static String nonReturnersToString(nonReturners nr) {
 		String result = null;
 		if (nr.universityName != null) {
-			result = nr.universityName + ": ";
+			result = "Educational Institute: " + nr.universityName + System.lineSeparator() ;
 			if (nr.studentList != null) {
 				for (lateStudent ls : nr.studentList) {
-					result += ls.firstName + " " + ls.lastName + " " + ls.phoneNumber + "\n";
+					result += ls.firstName + " " + ls.lastName + " " + ls.phoneNumber + System.lineSeparator() ;
 				}
 			} else {
 				result += "\n";
