@@ -4,6 +4,9 @@ import java.util.Calendar;
 import java.util.ArrayList ;
 import java.util.Map;
 
+import DRMSServices.lateStudent;
+import DRMSServices.nonReturners;
+
 
 /**
  * A <code>LibraryUDPServer</code> assists the <code>Library</code> in serving requests arriving form peer libraries
@@ -117,47 +120,59 @@ public class LibraryUDPServer implements Runnable {
 	// Sends the result as UDP message to the requestor
 	private void getNonReturners ( int days ) throws IOException {
 		// ArrayList to hold values
-		ArrayList<String> nonReturners = new ArrayList<String>() ;
-		nonReturners.add("Educational Institute: " + lib.getName() ) ; 		// Default first line
+		ArrayList<lateStudent> nonReturners = new ArrayList<lateStudent>() ;
 		// Loop through student account database
 		for ( Map.Entry<String, ArrayList<Student>> studentList : lib.getAccountDatabase().entrySet() ) {
 			for ( Student student : studentList.getValue() ) {
 				synchronized (student) {
 					if ( student.isNonReturner(days)) {
 						// If the student is non returner add the entry to the nonReturner array
-						String newEntry = student.getFirstName() + " " + student.getLastName() + " "+ student.getPhoneNumber() ;
-						nonReturners.add(newEntry) ;
+						nonReturners.add(new lateStudent ( student.getFirstName(), student.getLastName(),
+								student.getPhoneNumber() ) ) ;
 					}
 				}
 			}
 		}
 		
-		// Initially the server sends the size packet indicating the number of non returners
-		// Then the server sends each non returner in a seperate UDP message
-		String sizeString = Integer.toString(nonReturners.size()) ;
-		byte[] dataSize = sizeString.getBytes() ;
-		DatagramPacket sizePacket = new DatagramPacket(dataSize, sizeString.length(), control.getAddress(), 
-				control.getPort() );
-		sendData.send(sizePacket);
+		lateStudent[] studentList = new lateStudent[nonReturners.size()] ;
+		studentList = nonReturners.toArray(studentList) ;
 		
-		// Sleep is just to maintain send and receive synchronization when executing on the same machine
-		try {
-			Thread.sleep(400);
-		}catch (InterruptedException e ) {
-			
-		}
+		nonReturners result = new nonReturners( lib.getName(), studentList ) ;
+		ByteArrayOutputStream bs = new ByteArrayOutputStream () ;
+		ObjectOutputStream os = new ObjectOutputStream ( bs ) ;
 		
-		// Send each non returner in seperate UDP message
-		for ( String value : nonReturners ) {
-			byte[] data = value.getBytes() ;
-			DatagramPacket dataPacket = new DatagramPacket(data,value.length(), control.getAddress(), control.getPort());
-			sendData.send(dataPacket);
-			try {
-				Thread.sleep(1000);
-			}catch (InterruptedException e ) {
-				
-			}			
-		}
+		os.writeObject(result);
+		
+		byte[] data = bs.toByteArray() ;
+		DatagramPacket dataPacket = new DatagramPacket ( data, data.length, 
+				control.getAddress(), control.getPort() ) ;
+		sendData.send(dataPacket);
+//		// Initially the server sends the size packet indicating the number of non returners
+//		// Then the server sends each non returner in a seperate UDP message
+//		String sizeString = Integer.toString(nonReturners.size()) ;
+//		byte[] dataSize = sizeString.getBytes() ;
+//		DatagramPacket sizePacket = new DatagramPacket(dataSize, sizeString.length(), control.getAddress(), 
+//				control.getPort() );
+//		sendData.send(sizePacket);
+//		
+//		// Sleep is just to maintain send and receive synchronization when executing on the same machine
+//		try {
+//			Thread.sleep(400);
+//		}catch (InterruptedException e ) {
+//			
+//		}
+//		
+//		// Send each non returner in seperate UDP message
+//		for ( String value : nonReturners ) {
+//			byte[] data = value.getBytes() ;
+//			DatagramPacket dataPacket = new DatagramPacket(data,value.length(), control.getAddress(), control.getPort());
+//			sendData.send(dataPacket);
+//			try {
+//				Thread.sleep(1000);
+//			}catch (InterruptedException e ) {
+//				
+//			}			
+//		}
 		
 		// Write the log of the server
 		String message = "A successful call to get the non returners for " + lib.getName() + " was made at " + Calendar.getInstance().getTime() ;

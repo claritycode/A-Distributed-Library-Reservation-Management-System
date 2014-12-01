@@ -166,9 +166,11 @@ public class Student {
 	 * @return - Indicates the success or the failure of the operation
 	 * */
 	public boolean setDuration ( Book book, Integer days ) {
-		if ( books.containsKey(book)) {
-			books.put(book, days) ;
-			return true ;
+		for ( Map.Entry<Book, Integer> bookList : books.entrySet() ) {
+			if ( bookList.getKey().getName().equalsIgnoreCase(book.getName()) ) {
+				bookList.setValue( days ) ;
+				return true ;
+			}
 		}
 		
 		return false;

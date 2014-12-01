@@ -6,6 +6,8 @@ import java.io.*;
 import java.net.*;
 import java.util.Calendar ;
 
+import util.NonReturnersParser;
+import DRMSServices.* ;
 /**
  *@author Parth Patel
  * A <code>Library</code> represents the library of a University.
@@ -134,7 +136,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 	 * It checks the Student details for validity.
 	 * @return - A String representing success or failure ( Indicating the reason for failure )
 	 */
-	public String createAccount(String firstName, String lastName,
+	public boolean createAccount(String firstName, String lastName,
 			String email, String phoneNumber, String username,
 			String password, String educationalInstitute) {
 
@@ -145,7 +147,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 		if ( ! firstAlpha.matches("[a-zA-Z]") )  {
 			String message = "Bad username used in createAccount at " + Calendar.getInstance().getTime() ;
 			writeLog(message) ;
-			return "Invalid Username" ;
+			return false ;
 		}
 		
 		
@@ -164,7 +166,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 			String message = "An attempt create a user with invalid information was made at " 
 					+ Calendar.getInstance().getTime() ;
 			writeLog (message) ;
-			return e.getMessage() ;
+			return false ;
 		}
 		
 		boolean userFound = false ;
@@ -190,13 +192,13 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 		if ( userFound ) {
 			String message = "An attempt to create an existing user was made at " + Calendar.getInstance().getTime() ;
 			writeLog(message) ;
-			return username + " is already reserved" ;
+			return false ;
 		}
 		
 		String message = "A new student with username " + newStudent.getUserName () + " was created at " 
 				+ Calendar.getInstance().getTime();
 		writeLog ( message ) ;
-		return username + " created sucessfully" ;
+		return true ;
 		
 	}
 
@@ -210,7 +212,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 	 * @param authorName - Name of the author
 	 * @return String - Appropriate message on success or reason for failure
 	 * */
-	public String reserveBook(String username, String password,
+	public boolean reserveBook(String username, String password,
 			String bookName, String authorName) {
 
 		// Helper method to check if a registered student has requested this service
@@ -221,7 +223,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 			String message = "A user with invalid login credentials tried to register a book named" + bookName 
 					+  " at " + Calendar.getInstance().getTime();
 			writeLog(message) ;
-			return "Invalid Login Credentials" ;	
+			return false ;	
 		}
 		
 		// Create a new Book object. This object represents just a single copy of the Book
@@ -240,7 +242,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 				String message = bookName + " was reserved by " + currentStudent.getUserName()
 						+ " at " + Calendar.getInstance().getTime();
 				writeLog(message) ;
-				return bookName + " was reserved for " + username + " from " + name + " library" ;
+				return true ;
 			}
 			// An available book will not be up for order if the number of copies is zero
 			// Hence, inform the client about the unavailability of the book
@@ -248,7 +250,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 				String message = "Could not reserve book titled " + bookName + 
 						" for " + username + " as the book is unavailable at " + Calendar.getInstance().getTime() ;
 				writeLog ( message ) ;
-				return "Sorry! There are no available copies of " + bookName ;
+				return false ;
 			}
 			
 		} // If the book is not available inform the client about it 
@@ -256,7 +258,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 			String message = username + " demanded an unavailable book titled "
 					+ bookName + " at " + Calendar.getInstance().getTime() ;
 			writeLog ( message ) ;
-			return " Sorry! " + " we do not have a book titled " + bookName ;
+			return false ;
 		}
 	}
 	
@@ -271,7 +273,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 	 * @param authorName - Name of the author
 	 * @return String - Appropriate message on success or reason for failure
 	 * */
-	public String reserveInterLibrary ( String username, String password, String bookName, String authorName ) {
+	public boolean reserveInterLibrary ( String username, String password, String bookName, String authorName ) {
 
 		// Helper method to check if a registered student has requested this service
 
@@ -283,7 +285,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 			String message = "A user with invalid login credentials tried to register a book named" + bookName 
 					+  " at " + Calendar.getInstance().getTime();
 			writeLog(message) ;
-			return "Invalid Login Credentials" ;	
+			return false ;	
 		}
 		
 		// Create a new Book object. This object represents just a single copy of the Book
@@ -303,7 +305,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 				String message = bookName + " was reserved by " + currentStudent.getUserName()
 						+ " at " + Calendar.getInstance().getTime();
 				writeLog(message) ;
-				return bookName + " was reserved for " + username + " from " + name + " library" ;
+				return true ;
 			}
 		}
 		
@@ -334,7 +336,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 					String message = bookName + " was reserved by " + currentStudent.getUserName()
 							+ " from " + lib.getName() + " library at " + Calendar.getInstance().getTime() ;
 					writeLog(message) ;
-					return bookName + " was reserved for " + username + " from " + lib.getName() + " library" ;
+					return true ;
 				}
 			}
 		}
@@ -343,7 +345,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 		String message = " Username " + currentStudent.getUserName() + " tried to registered a non existing book " 
 				+ "using inter library service at " + Calendar.getInstance().getTime() ; 
 		writeLog(message) ;
-		return "Sorry! None of the library have " + bookName + " available" ;
+		return false ;
 	}
 
 	@Override
@@ -359,7 +361,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 	 * @param days - the number of days beyond which an issued book is considered for fine
 	 * @return String[] - representing all the non returners
 	 * */
-	public String[] getNonReturners(String username, String password,
+	public nonReturners[] getNonReturners(String username, String password,
 			String educationalInstitute, int days) {
 		// Check login credentials of admin
 		if ( !username.equals("admin") || !password.equals("admin")) {
@@ -370,8 +372,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 		}
 		
 		// ArrayList to hold the result
-		ArrayList<String> result = new ArrayList<String>() ;
-		result.add("Educational Institute: " + name ) ;
+		ArrayList<lateStudent> result = new ArrayList<lateStudent>() ;
 		
 		// Loop through the student account database
 		
@@ -381,18 +382,22 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 					// Check if the student is a non returner
 					if ( student.isNonReturner(days)) {
 						// Put an entry into array for the non returner
-						String newEntry = student.getFirstName() + " " + student.getLastName() + " "
-								+ student.getPhoneNumber() ;
-						result.add(newEntry) ;
-						
+						result.add( new lateStudent ( student.getFirstName(), student.getLastName(), student.getPhoneNumber())) ;
 					}
 				}
 			}
 		}
 		
+		
+		lateStudent[] studentList = new lateStudent[result.size()] ;
+		studentList = result.toArray(studentList) ;
+
 		// Get addresses of other libraries
 		ArrayList<LibraryAddress> others = getOtherLibraries() ;
 
+		nonReturners[] resultArray = new nonReturners[others.size()] ;
+		resultArray[0] = new nonReturners( name, studentList ) ;
+		
 		// Concurrently send request to other libraries to obtain their non returners
 		LibraryUDPClient[] requester = new LibraryUDPClient[others.size()] ;
 		Thread requests[] = new Thread[requester.length] ;
@@ -413,13 +418,15 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 		
 		// Add the results obtained from all the peer libraries
 		for ( int i = 0; i < requester.length ; i++ ) {
-			result.addAll(requester[i].getResult());
+			resultArray[i+1] = requester[i].getResult() ;
 		}
+		
+		
 	
 			try {
-				for ( String message : result ) {
+				for ( nonReturners message : resultArray ) {
 					// Write the results to the admin file
-					adminFile.write(message + System.lineSeparator());
+					adminFile.write( NonReturnersParser.nonReturnersToString(message));
 					adminFile.flush();	
 				}	
 			} catch ( IOException e ) {
@@ -433,8 +440,6 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 		writeLog(message) ;
 
 		// Convert the arraylist into a String array to be sended to the client
-		String[] resultArray = new String[result.size()] ;
-		resultArray = result.toArray(resultArray) ;
 		return resultArray;
 	}
 
@@ -450,17 +455,15 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 	 * @param authorNAme - The name of the author of the book
 	 * @return boolean - Indicate success or failure of the operation
 	 * */
-	public boolean setDuration(String username, String password,
-			String studentUsername, String bookName, String authorName,
-			int days) {
+	public boolean setDuration( String studentUsername, String bookName, int days ) {
 	
 		// Check the login credentials of the admin
-		if ( !username.equals("admin") || !password.equals("admin")) {
-			String message = "A wrong username or password was given to set the duration of  " + username + " at " 
-					+ Calendar.getInstance().getTime() ;
-			writeLog(message) ;
-			return false ;
-		}
+//		if ( !username.equals("admin") || !password.equals("admin")) {
+//			String message = "A wrong username or password was given to set the duration of  " + username + " at " 
+//					+ Calendar.getInstance().getTime() ;
+//			writeLog(message) ;
+//			return false ;
+//		}
 		
 		// Search for the student
 		String firstAlpha = studentUsername.substring(0, 1) ;
@@ -479,7 +482,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 				if ( existing.getUserName().equals (studentUsername) ) {
 					// Set the duration for the student
 					synchronized ( existing ) {
-						Book b = new Book ( bookName, authorName ) ;
+						Book b = new Book ( bookName, null ) ;
 						return existing.setDuration ( b, days ) ;
 					}
 				}
@@ -669,6 +672,18 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 		}
 		
 		return result ;
+	}
+
+	@Override
+	public void shutDown() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setByzantineFlag(boolean byzantineFlag) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
