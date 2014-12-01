@@ -43,7 +43,7 @@ public class StartServer {
 				rootpoa.the_POAManager().activate();
 				
 				// create servant and register it with the ORB
-				LibraryPOAImpl impl = new LibraryPOAImpl(libraryName, properties);
+				LibraryPOAImpl impl = new LibraryPOAImpl(libraryName);
 				
 				// get object reference from the servant
 				org.omg.CORBA.Object ref = rootpoa.servant_to_reference(impl);

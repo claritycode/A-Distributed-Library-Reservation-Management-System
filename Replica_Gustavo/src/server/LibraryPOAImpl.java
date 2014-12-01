@@ -1,19 +1,23 @@
 package server;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-import DRMSServices.LibraryInterfacePOA;
-import DRMSServices.nonReturners;
 import service.LibraryService;
 import service.LibraryServiceImpl;
 import util.NonReturnersParser;
+import DRMSServices.LibraryInterfacePOA;
+import DRMSServices.nonReturners;
 import entities.Book;
 import entities.Student;
 import entities.constants.PropertiesEnum;
@@ -30,12 +34,15 @@ public class LibraryPOAImpl extends LibraryInterfacePOA {
 
 	private boolean byzantineFlag;
 
-	public LibraryPOAImpl(final String institution, final Map<String, String> properties) {
+	public LibraryPOAImpl(final String institution) {
 		this.name = institution;
 		System.setProperty("obj.log", "./library_" + name + ".log");
 
-		this.properties = properties;
-		final int udpPort = new Integer(getLibraryProperty(PropertiesEnum.LIBRARY_UDP_PORT));
+		this.properties = loadProperties();;
+		// final int udpPort = new Integer(getLibraryProperty(PropertiesEnum.LIBRARY_UDP_PORT));
+		// FIXME - random ports
+		final int udpPort = 9000 + (int)(Math.random() * 200); // example using random ports
+		
 		final String studentsCsv = getLibraryProperty(PropertiesEnum.LIBRARY_STUDENTS_FILE);
 		final String booksCsv = getLibraryProperty(PropertiesEnum.LIBRARY_BOOKS_FILE);
 
@@ -48,23 +55,34 @@ public class LibraryPOAImpl extends LibraryInterfacePOA {
 		Thread t = new Thread(this.udpServer);
 		t.start();
 	}
-
-	public LibraryPOAImpl(final String institution, final Map<String, String> properties, final int udpPort) {
-		this.name = institution;
-		System.setProperty("obj.log", "./library_" + name + ".log");
-
-		this.properties = properties;
-		final String studentsCsv = getLibraryProperty(PropertiesEnum.LIBRARY_STUDENTS_FILE);
-		final String booksCsv = getLibraryProperty(PropertiesEnum.LIBRARY_BOOKS_FILE);
-
-		this.service = new LibraryServiceImpl(studentsCsv, booksCsv, name);
-
-		LOGGER = Logger.getLogger(LibraryPOAImpl.class);
-
-		// start the udp server
-		this.udpServer = new UDPServer(institution, udpPort, this);
-		Thread t = new Thread(this.udpServer);
-		t.start();
+	
+	private Map<String, String> loadProperties() {
+		Map<String, String> properties = new HashMap<String, String>();
+		Properties prop = new Properties();
+		InputStream input = null;
+	 
+		try {
+	        input = this.getClass().getResourceAsStream("../config.properties");
+			prop.load(input);
+			
+			Enumeration<?> e = prop.propertyNames();
+			while (e.hasMoreElements()) {
+				String key = (String) e.nextElement();
+				String value = prop.getProperty(key);
+				properties.put(key, value);
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} finally {
+			if (input != null) {
+				try {
+					input.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return properties;
 	}
 
 	public String getProperty(PropertiesEnum property) {

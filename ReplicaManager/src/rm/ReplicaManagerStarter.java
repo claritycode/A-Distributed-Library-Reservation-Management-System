@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -19,12 +20,10 @@ import org.omg.PortableServer.POAHelper;
 
 import rm.constants.OrbEnum;
 import rm.constants.PropertiesEnum;
-import DRMSServices.LibraryInterface;
-import DRMSServices.LibraryInterfaceHelper;
 
 public class ReplicaManagerStarter {
 	
-	public static final String CONFIG_PATH = "./resources/config.properties";
+	public static final String CONFIG_PATH = "./resources/rmconfig.properties";
 	public static final String ROOT_POA = "RootPOA";
 
 	public static void main(String[] args) {
@@ -38,20 +37,14 @@ public class ReplicaManagerStarter {
 				ORB orb = getORB(properties);
 				POA rootpoa = getRootPOA(orb);
 
-				final Map<String, LibraryInterface> replicas = loadReplicas(orb, args[1], args[2], args[3]);
+				final List<String> libraryNames = Arrays.asList(new String[] {args[1], args[2], args[3]});
 
-				// create servant and register it with the ORB
-				final ReplicaManagerImpl impl = new ReplicaManagerImpl(rmId, replicas, properties, orb, rootpoa);
+				final ReplicaManagerImpl impl = new ReplicaManagerImpl(rmId, libraryNames, orb, rootpoa);
 
-				// FIXME - erase
-				System.out.println("step 1");
-				impl.launchHeartBeats();
+				// FIXME - remove test class (TempClass)
+				Thread t = new Thread(new ReplicaManagerStarter().new TempClass(impl));
+				t.start();
 
-				System.out.println("step 3");
-				impl.handleFailure(args[1], rmId);
-				// end of erase
-
-				// FIXME - orb should be generated in a external job (once for all projects)
 				orb.run();
 			} else {
 				System.err.println("Please provide args as defined in the instructions.");
@@ -64,6 +57,36 @@ public class ReplicaManagerStarter {
 		} finally {
 			System.out.println("Exiting Library Server ");
 		}
+	}
+	
+	// FIXME - erase TempClass
+	class TempClass implements Runnable {
+		ReplicaManagerImpl impl;
+		
+		TempClass(ReplicaManagerImpl impl) {
+			this.impl = impl;
+		}
+
+		@Override
+		public void run() {
+			try {
+				Thread.sleep(2000);
+				
+				System.out.println("processHeartBeat 1: " + impl.processHeartBeat("concordia"));
+
+				System.out.println("handleFailure");
+				impl.handleFailure("concordia", this.impl.getRmId());
+				
+				Thread.sleep(2000);
+				
+				System.out.println("processHeartBeat 2: " + impl.processHeartBeat("concordia"));
+				impl.launchHeartBeats();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
 	}
 
 	private static Map<String, String> loadProperties() {
@@ -135,22 +158,6 @@ public class ReplicaManagerStarter {
 		org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
 		// Use NamingContextExt which is part of the Interoperable Naming Service (INS) specification.
 		return NamingContextExtHelper.narrow(objRef);
-	}
-
-	private static Map<String, LibraryInterface> loadReplicas(final ORB orb, String... replicaNames) throws UserException {
-		// FIXME - create replicas on RM start, instead of loading externally
-		Map<String, LibraryInterface> replicas = new HashMap<String, LibraryInterface>();
-		for (String name : replicaNames) {
-			replicas.put(name, loadLibrary(orb, name));
-		}
-		return replicas;
-	}
-
-	private static LibraryInterface loadLibrary(final ORB orb, final String institution) throws UserException {
-		NamingContextExt ncRef = getNamingContextExt(orb);
-
-		// resolve the Object Reference in Naming
-		return LibraryInterfaceHelper.narrow(ncRef.resolve_str(institution));
 	}
 
 }

@@ -1,32 +1,30 @@
-package server;
+package rm.udp;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-public class UDPServer implements Runnable {
+import rm.ReplicaManager;
 
-	private final String name;
-	private final int port;
-	private final LibraryPOAImpl poa;
-	private DatagramSocket serverSocket = null;
-	private boolean isRunning = false;
+public class RMUDPServer implements Runnable {
 	
-	public UDPServer(final String name, final int port, final LibraryPOAImpl poa) {
-		this.name = name;
+	private final int port;
+	private final ReplicaManager rm;
+	DatagramSocket serverSocket = null;
+
+	public RMUDPServer(final int port, final ReplicaManager rm) {
 		this.port = port;
-		this.poa = poa;
+		this.rm = rm;
 	}
 	
 	@Override
 	public void run() {
 		try {
 			serverSocket = new DatagramSocket(port);
-			isRunning = true;
-			System.out.println("Started UDP server for library [" + name + "] on port [" + port + "]");
+			System.out.println("Started UDP server for RM [" + rm.getRmId() + "] on port [" + port + "]");
 			byte[] receiveData = new byte[1024];
-			while(isRunning) {
+			while(true) {
 				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				serverSocket.receive(receivePacket);
 				DatagramPacket sendPacket = processReceivedPacket(receivePacket);
@@ -37,7 +35,7 @@ public class UDPServer implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			System.out.println("Existing udp server: " + name);
+			System.out.println("Existing udp server: " + rm.getRmId());
 			if (serverSocket != null) {
 				serverSocket.close();
 			}
@@ -52,22 +50,13 @@ public class UDPServer implements Runnable {
 		int clientPort = receivePacket.getPort();
 		
 		String clientMsg = new String(receivePacket.getData());
-		System.out.println(this.name + " received [" + clientMsg + "] from [" + clientIP + ":" + clientPort);
+		System.out.println(rm.getRmId() + " received [" + clientMsg + "] from [" + clientIP + ":" + clientPort);
 		
-		String message = poa.processUdpClientMsg(clientMsg);
+		String message = rm.processUdpClientMsg(clientMsg);
 		if (message != null && message.length() > 0) {
 			byte[] sendData = message.getBytes();
 			sendPacket = new DatagramPacket(sendData, sendData.length, clientIP, clientPort);
 		}
 		return sendPacket;
 	}
-	
-	/**
-	 * Close socket to release port used by server.
-	 */
-	public void unbindUdp() {
-		serverSocket.close();
-		isRunning = false;
-	}
-
 }

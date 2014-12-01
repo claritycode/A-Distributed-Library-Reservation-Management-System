@@ -1,6 +1,8 @@
 package rm;
 
 public interface ReplicaManager {
+	
+	String getRmId();
 
 	/**
 	 * Process failure notification from the Front End. If the same replica produces incorrect results for three 
@@ -33,4 +35,11 @@ public interface ReplicaManager {
 	 * @return true if this ReplicaManager agrees the replica has crashed.
 	 */
 	boolean processCrashAgreement(String crashedReplicaName, String crashedRmId, String notifierRmId);
+	
+	/**
+	 * Process an incoming udp message from another rm.
+	 * @param clientMsg
+	 * @return
+	 */
+	String processUdpClientMsg(final String clientMsg);
 }
