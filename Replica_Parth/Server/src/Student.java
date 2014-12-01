@@ -166,9 +166,12 @@ public class Student {
 	 * @return - Indicates the success or the failure of the operation
 	 * */
 	public boolean setDuration ( Book book, Integer days ) {
+		
+		// Loop through the HashMap consisting of the books reserved by this Student
 		for ( Map.Entry<Book, Integer> bookList : books.entrySet() ) {
+			// Compare the book name
 			if ( bookList.getKey().getName().equalsIgnoreCase(book.getName()) ) {
-				bookList.setValue( days ) ;
+				bookList.setValue( days ) ;			// Set the days
 				return true ;
 			}
 		}

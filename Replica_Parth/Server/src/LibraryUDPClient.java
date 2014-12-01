@@ -14,7 +14,7 @@ import DRMSServices.nonReturners;
  * */
 public class LibraryUDPClient implements Runnable {
 
-	private nonReturners result ;
+	private nonReturners result ;		// Non Returner students of other university
 	int portNo ;
 	int days ;
 	
@@ -48,47 +48,34 @@ public class LibraryUDPClient implements Runnable {
 			DatagramPacket packet = new DatagramPacket(message, daysString.length(), ipAddress, portNo) ;
 			otherServer.send(packet);
 			
+			// The thread is put to sleep just to ensure Thread execution to be proper when running Client and server on
+			// same machine. This will not be required if the UDP Server where actually on a different machine
 			try {
-				Thread.sleep(400);
+				Thread.sleep(300);
 			}catch (InterruptedException e ) {
 				
 			}
 			
+			// Receive Reply
 			byte[] replyBuffer = new byte[1024] ;
 			DatagramPacket replyPacket = new DatagramPacket ( replyBuffer, replyBuffer.length ) ;
 			otherServer.receive(replyPacket);
 			
+			// The reply obtained from a peer server would be a Serialized object of type nonReturner
+			// Hence, Deserialize the object
 			ByteArrayInputStream bs = new ByteArrayInputStream ( replyPacket.getData() ) ;
 			ObjectInputStream os = new ObjectInputStream ( bs ) ;
 			result = (nonReturners) os.readObject() ;
-			// Initially the peer sends size packet indicating the number of peer non returners from that library.
-//			// Then the library sends size number of packets one for each non returner.
-//			byte[] size = new byte[512] ;
-//			DatagramPacket sizePacket = new DatagramPacket(size, size.length) ;
-//			otherServer.receive(sizePacket);
-//			String dataSizeString = new String(sizePacket.getData(),0,sizePacket.getLength());
-//			int dataSize = Integer.parseInt(dataSizeString);
-//			result = new ArrayList<String>(dataSize) ;
-//			
-//			// loop until all the packets arrive
-//
-//			while ( dataSize != 0 ) {
-//				byte[] reply = new byte[512] ;
-//				DatagramPacket data = new DatagramPacket ( reply, reply.length ) ;
-//				otherServer.receive(data);
-//				
-//				// Convert packets into string
-//				String nonReturner = new String(data.getData(), 0, data.getLength());
-//			
-//				result.add(nonReturner);		// Add to arraylist
-//				--dataSize ;
-//			}			
+			
 		} catch ( SocketException e ) {
-			System.out.println ( "A socket exception happened while requesting non returners from the server at port number " + portNo + " "+e.getMessage() ) ;
+			System.out.println ( "A socket exception happened while requesting non returners from the server at port number " 
+					+ portNo + " "+e.getMessage() ) ;
 		} catch ( IOException e ) {
-			System.out.println ( "A IOException exception happened while requesting non returners from the server at port number " + portNo + " " + e.getMessage() ) ;
+			System.out.println ( "A IOException exception happened while requesting non returners from the server at port number "
+					+ portNo + " " + e.getMessage() ) ;
 		} catch ( ClassNotFoundException e ) {
-			System.out.println ( "A class not found exception happened while requesting non returners from the server at port number " + portNo + " "+e.getMessage() ) ;
+			System.out.println ( "A class not found exception happened while requesting non returners from the server at port "
+					+ "number " + portNo + " "+e.getMessage() ) ;
 		} finally {
 			if ( otherServer != null ) {
 				otherServer.close() ;

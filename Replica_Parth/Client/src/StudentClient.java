@@ -15,7 +15,7 @@ import java.util.Properties ;
  * and delivers the response.
  * 
  * */
-public class StudentClient implements Runnable {
+public class StudentClient  {
 	
 	private ORB clientORB ;	
 	private NamingContext directory ;
@@ -41,33 +41,33 @@ public class StudentClient implements Runnable {
 		}
 	}
 	
-	public void run() {
-		
-			
-		String[] institute = {"Concordia University", "McGill University", "Vanier College"} ;
-		String[] book = { "CM", "MV", "CV", "name0" } ;
-		int rand = (int) (Math.random() * 10) ;
-		int randInstitute = (int)(Math.random() * 3) ;
-		int randBook = (int)(Math.random() * 4 ) ;
-		LibraryInterface lib = getRemoteObject ( institute[randInstitute] ) ;
-		String firstName = "First" + rand ;
-		String lastName = "last" + rand ;
-		String email = "emailaddress" + rand ;
-		String phoneNumber = "51451451" + rand;
-		String username = "username" + rand ;
-		String password = "password" + rand ;
-		String educationalInstitute = institute[randInstitute];
-		
-		String result ;
-		result = lib.createAccount(firstName, lastName, email, phoneNumber, username, password, educationalInstitute);
-
-		String reserveBook ;
-		reserveBook = lib.reserveBook(username, password, book[randBook], book[randBook]) ;
-		
-		randBook = (int) ( Math.random() * 4 ) ;
-		String reserveInterBook ;
-		reserveInterBook = lib.reserveInterLibrary(username, password, book[randBook], book[randBook]) ;			
-	}
+//	public void run() {
+//		
+//			
+//		String[] institute = {"Concordia University", "McGill University", "Vanier College"} ;
+//		String[] book = { "CM", "MV", "CV", "name0" } ;
+//		int rand = (int) (Math.random() * 10) ;
+//		int randInstitute = (int)(Math.random() * 3) ;
+//		int randBook = (int)(Math.random() * 4 ) ;
+//		LibraryInterface lib = getRemoteObject ( institute[randInstitute] ) ;
+//		String firstName = "First" + rand ;
+//		String lastName = "last" + rand ;
+//		String email = "emailaddress" + rand ;
+//		String phoneNumber = "51451451" + rand;
+//		String username = "username" + rand ;
+//		String password = "password" + rand ;
+//		String educationalInstitute = institute[randInstitute];
+//		
+//		String result ;
+//		result = lib.createAccount(firstName, lastName, email, phoneNumber, username, password, educationalInstitute);
+//
+//		String reserveBook ;
+//		reserveBook = lib.reserveBook(username, password, book[randBook], book[randBook]) ;
+//		
+//		randBook = (int) ( Math.random() * 4 ) ;
+//		String reserveInterBook ;
+//		reserveInterBook = lib.reserveInterLibrary(username, password, book[randBook], book[randBook]) ;			
+//	}
 	
 	/**
 	 * Give student a Menu
@@ -139,7 +139,7 @@ public class StudentClient implements Runnable {
 		}
 		
 		try {
-			String result ;
+			boolean result ;
 			result = lb.createAccount(fName, lName, email, phoneNumber, userName, password, educationalInstitute);
 			System.out.println ( result ) ;
 		} catch ( Exception e ) {
@@ -173,7 +173,7 @@ public class StudentClient implements Runnable {
 		}
 		
 		try {
-			String result ;
+			boolean result ;
 			result = lb.reserveBook(userName, password, bookName, authorName) ;
 			System.out.println ( result ) ;
 		} catch ( Exception e ) {
@@ -207,7 +207,7 @@ public class StudentClient implements Runnable {
 		}
 		
 		try {
-			String result ;
+			boolean result ;
 			result = lb.reserveInterLibrary(userName, password, bookName, authorName) ;
 			System.out.println ( result ) ;
 		} catch ( Exception e ) {

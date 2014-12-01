@@ -105,7 +105,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 		else {
 			
 			bookDatabase.put(newArrival, newArrival) ;
-			String message = "Book named " + newArrival.getName() + " added to collection at " 
+			String message = bookCopies + "Copies of Book named " + newArrival.getName() + " added to collection at " 
 					+ Calendar.getInstance().getTime() + " by " + name ;
 			writeLog ( message ) ;	
 			return true ;
@@ -138,7 +138,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 	 * It creates a new <code>Student</code> into the account database of the library.
 	 * The Student can there after use other library facilities
 	 * It checks the Student details for validity.
-	 * @return - A String representing success or failure ( Indicating the reason for failure )
+	 * @return boolean - A boolean value representing success or failure.
 	 */
 	public boolean createAccount(String firstName, String lastName,
 			String email, String phoneNumber, String username,
@@ -214,7 +214,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 	 * @param password - password of the <code>Student</code>
 	 * @param bookName - NAme of the book
 	 * @param authorName - Name of the author
-	 * @return String - Appropriate message on success or reason for failure
+	 * @return boolean - A boolean value representing success or failure
 	 * */
 	public boolean reserveBook(String username, String password,
 			String bookName, String authorName) {
@@ -244,7 +244,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 				}
 				// Write appropriate  message to activity log
 				String message = bookName + " was reserved by " + currentStudent.getUserName()
-						+ " at " + Calendar.getInstance().getTime();
+						+ " at " + Calendar.getInstance().getTime() + " (Copies Left: " + bookDatabase.get(demandedBook).getCopies() + ")";
 				writeLog(message) ;
 				return true ;
 			}
@@ -275,7 +275,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 	 * @param password - password of the <code>Student</code>
 	 * @param bookName - NAme of the book
 	 * @param authorName - Name of the author
-	 * @return String - Appropriate message on success or reason for failure
+	 * @return boolean - A boolean value representing success or failure
 	 * */
 	public boolean reserveInterLibrary ( String username, String password, String bookName, String authorName ) {
 
@@ -307,7 +307,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 				
 				// Write appropriate  message to activity log
 				String message = bookName + " was reserved by " + currentStudent.getUserName()
-						+ " at " + Calendar.getInstance().getTime();
+						+ " at " + Calendar.getInstance().getTime() + " (Copies Left: " + bookDatabase.get(demandedBook).getCopies() + ")";
 				writeLog(message) ;
 				return true ;
 			}
@@ -363,7 +363,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 	 * @param password - password of the admin
 	 * @param educationalInstitute - University of the admin
 	 * @param days - the number of days beyond which an issued book is considered for fine
-	 * @return String[] - representing all the non returners
+	 * @return nonReturners[] - representing all the non returners from all the libraries that are part of this DRMS
 	 * */
 	public nonReturners[] getNonReturners(String username, String password,
 			String educationalInstitute, int days) {
@@ -392,15 +392,18 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 			}
 		}
 		
-		
+		// Convert the ArrayList into an array
+		// It is necessary as the nonReturner class has an array of lateStudent
+		// Note: This has to be done because IDL does not have a mapping for Java ArrayList.
 		lateStudent[] studentList = new lateStudent[result.size()] ;
 		studentList = result.toArray(studentList) ;
 
 		// Get addresses of other libraries
 		ArrayList<LibraryAddress> others = getOtherLibraries() ;
 
-		nonReturners[] resultArray = new nonReturners[others.size()] ;
-		resultArray[0] = new nonReturners( name, studentList ) ;
+		// Final Result
+		nonReturners[] resultArray = new nonReturners[others.size() + 1] ;
+		resultArray[0] = new nonReturners( name, studentList ) ;		// Add the nonReturners for this library
 		
 		// Concurrently send request to other libraries to obtain their non returners
 		LibraryUDPClient[] requester = new LibraryUDPClient[others.size()] ;
@@ -430,6 +433,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 			try {
 				for ( nonReturners message : resultArray ) {
 					// Write the results to the admin file
+					// Use a static method from NonReturnersParser to help parse the state of a nonReturners object
 					adminFile.write( NonReturnersParser.nonReturnersToString(message));
 					adminFile.flush();	
 				}	
@@ -461,14 +465,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 	 * */
 	public boolean setDuration( String studentUsername, String bookName, int days ) {
 	
-		// Check the login credentials of the admin
-//		if ( !username.equals("admin") || !password.equals("admin")) {
-//			String message = "A wrong username or password was given to set the duration of  " + username + " at " 
-//					+ Calendar.getInstance().getTime() ;
-//			writeLog(message) ;
-//			return false ;
-//		}
-		
+				
 		// Search for the student
 		String firstAlpha = studentUsername.substring(0, 1) ;
 		if ( ! firstAlpha.matches("[a-zA-Z]"))  {
@@ -491,8 +488,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 					}
 				}
 			}	
-		}
-		
+		}		
 		return false ;
 	}
 	

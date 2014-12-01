@@ -9,8 +9,10 @@ import java.util.Properties ;
 
 import org.omg.CosNaming.NameComponent;
 
+import util.NonReturnersParser;
 import DRMSServices.LibraryInterface;
 import DRMSServices.LibraryInterfaceHelper;
+import DRMSServices.nonReturners;
 
 /**
  * @author Parth Patel
@@ -105,11 +107,11 @@ public class AdminClient {
 				System.out.println("Please try again later" );
 			}
 			try {
-				String[] result ;
+				nonReturners[] result ;
 
 				result = lb.getNonReturners(username,password,educationalInstitute, Integer.parseInt(days));
-				for ( String data : result ) {
-					System.out.println ( data ) ;
+				for ( nonReturners data : result ) {
+					System.out.println ( NonReturnersParser.nonReturnersToString(data) ) ;
 				}	
 			} catch ( Exception e ) {
 				System.out.println("Your opeartion failed due to an error at the library server");
@@ -128,16 +130,16 @@ public class AdminClient {
 		try {
 			InputStreamReader in = new InputStreamReader ( System.in ) ;
 			BufferedReader r = new BufferedReader ( in ) ;
-			System.out.println("Enter the username: ");
-			String username = r.readLine () ;
-			System.out.println("Enter the pasword: ");
-			String password = r.readLine () ;
+//			System.out.println("Enter the username: ");
+//			String username = r.readLine () ;
+//			System.out.println("Enter the pasword: ");
+//			String password = r.readLine () ;
 			System.out.println("Enter the username of student: " );
 			String studentUsername = r.readLine() ;
 			System.out.println("Enter the name of the book: ");
 			String bookName = r.readLine() ;
-			System.out.println("Enter the name of the author: ");
-			String authorName = r.readLine();
+//			System.out.println("Enter the name of the author: ");
+//			String authorName = r.readLine();
 			System.out.println("Enter the educational institute: ");
 			String educationalInstitute = r.readLine () ;
 			System.out.println("Enter the number of days: ");
@@ -153,7 +155,7 @@ public class AdminClient {
 			try {
 				boolean result = false ;
 
-				result = lb.setDuration ( username, password, studentUsername, bookName, authorName, days ) ;
+				result = lb.setDuration ( studentUsername, bookName, days ) ;
 				if ( result ) {
 					System.out.println("Your operation was successful");
 				}

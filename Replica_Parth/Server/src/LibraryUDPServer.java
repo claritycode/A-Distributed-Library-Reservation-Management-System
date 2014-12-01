@@ -103,7 +103,7 @@ public class LibraryUDPServer implements Runnable {
 		// Generate appropriate message and write it to log
 		if ( result ) {
 			message = "A book named " + bookName + " by " + authorName + 
-					" was reserved at " + Calendar.getInstance().getTime() + "And now there are " + + availableBook.getCopies() + "copies left" ;	
+					" was reserved at " + Calendar.getInstance().getTime() + " (Copies Left: " + availableBook.getCopies() + ")" ;	
 		} else {
 			message = "An unsucessful attempt to reserve " + bookName + " by " +
 					authorName + " was made at " + Calendar.getInstance().getTime() ;
@@ -134,46 +134,27 @@ public class LibraryUDPServer implements Runnable {
 			}
 		}
 		
+
+		// Convert the ArrayList into an array
+		// It is necessary as the nonReturner class has an array of lateStudent
+		// Note: This has to be done because IDL does not have a mapping for Java ArrayList.
 		lateStudent[] studentList = new lateStudent[nonReturners.size()] ;
 		studentList = nonReturners.toArray(studentList) ;
 		
-		nonReturners result = new nonReturners( lib.getName(), studentList ) ;
+		nonReturners result = new nonReturners( lib.getName(), studentList ) ;	// Final Result
+		
+		// The UDP Server sends a Serialized object of type nonReturner
+		
 		ByteArrayOutputStream bs = new ByteArrayOutputStream () ;
 		ObjectOutputStream os = new ObjectOutputStream ( bs ) ;
 		
-		os.writeObject(result);
+		os.writeObject(result);		// Serialize Object
 		
 		byte[] data = bs.toByteArray() ;
 		DatagramPacket dataPacket = new DatagramPacket ( data, data.length, 
 				control.getAddress(), control.getPort() ) ;
 		sendData.send(dataPacket);
-//		// Initially the server sends the size packet indicating the number of non returners
-//		// Then the server sends each non returner in a seperate UDP message
-//		String sizeString = Integer.toString(nonReturners.size()) ;
-//		byte[] dataSize = sizeString.getBytes() ;
-//		DatagramPacket sizePacket = new DatagramPacket(dataSize, sizeString.length(), control.getAddress(), 
-//				control.getPort() );
-//		sendData.send(sizePacket);
-//		
-//		// Sleep is just to maintain send and receive synchronization when executing on the same machine
-//		try {
-//			Thread.sleep(400);
-//		}catch (InterruptedException e ) {
-//			
-//		}
-//		
-//		// Send each non returner in seperate UDP message
-//		for ( String value : nonReturners ) {
-//			byte[] data = value.getBytes() ;
-//			DatagramPacket dataPacket = new DatagramPacket(data,value.length(), control.getAddress(), control.getPort());
-//			sendData.send(dataPacket);
-//			try {
-//				Thread.sleep(1000);
-//			}catch (InterruptedException e ) {
-//				
-//			}			
-//		}
-		
+
 		// Write the log of the server
 		String message = "A successful call to get the non returners for " + lib.getName() + " was made at " + Calendar.getInstance().getTime() ;
 		lib.writeLog(message) ;

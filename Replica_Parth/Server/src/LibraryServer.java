@@ -73,6 +73,17 @@ public class LibraryServer {
 			System.out.println ( e.getMessage() ) ;
 		} 
 		
+		// Dummy books
+		libraries[0].addBook("CM", "CM", 1) ;
+		libraries[0].addBook("CV", "CV", 1) ;
+		libraries[1].addBook( "MV", "MV", 1 ) ;
+		libraries[1].addBook("CM", "CM", 1) ;
+		libraries[2].addBook("CV", "CV", 1) ;
+		libraries[2].addBook("MV", "MV", 1) ;
+		libraries[0].addBook("name0", "author0", 1) ;
+		libraries[1].addBook("name0", "author0", 1) ;
+		libraries[2].addBook("name0", "author0", 1) ;
+		
 		System.out.println("The following three Libraries are currently part of the DRMS");
 		System.out.println("1. Concordia University");
 		System.out.println("2. McGill University");
