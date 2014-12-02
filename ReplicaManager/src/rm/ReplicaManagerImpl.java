@@ -14,7 +14,7 @@ import rm.udp.RMUDPServer;
 import DRMSServices.LibraryInterface;
 
 public class ReplicaManagerImpl implements ReplicaManager {
-	
+
 	public static final String UDP_MSG_SPLIT = ":";
 
 	private final String rmId;
@@ -22,21 +22,21 @@ public class ReplicaManagerImpl implements ReplicaManager {
 	private final ORB orb;
 	private final POA rootpoa;
 	private final Map<String, Integer> rmUDPPorts;
-	private final RMUDPServer udpServer;
-	private final HeartBeatDispatcher hearBeat;
+	private final Map<String, CrashedNode> crashedNodes;
 
-	public ReplicaManagerImpl(final String rmId, final List<String> libraryNames, final Map<String, Integer> rmUDPPorts, final ORB orb, final POA rootpoa)
-			throws UserException {
+	public ReplicaManagerImpl(final String rmId, final List<String> libraryNames, final Map<String, Integer> rmUDPPorts,
+			final ORB orb, final POA rootpoa) throws UserException {
 		this.rmId = rmId;
 		this.orb = orb;
 		this.rootpoa = rootpoa;
 		this.libraries = new HashMap<String, LibraryInterface>();
 		this.startLibraries(libraryNames);
 		this.rmUDPPorts = rmUDPPorts;
-		
-		// create and start the udp server
-		this.udpServer = startUdpServer();
-		this.hearBeat = startHeartBeatDispatcher();
+		this.crashedNodes = new HashMap<String, CrashedNode>();
+
+		// create and start the udp server thread and heart beat thread
+		startUdpServer();
+		startHeartBeatDispatcher();
 	}
 
 	private void startLibraries(final List<String> libraryNames) throws UserException {
@@ -45,27 +45,19 @@ public class ReplicaManagerImpl implements ReplicaManager {
 			this.libraries.put(libraryName, library);
 		}
 	}
-	
-	private RMUDPServer startUdpServer() {
-		RMUDPServer rmUdpServer = null;
-		if (this.udpServer == null) {
-			rmUdpServer = new RMUDPServer(rmUDPPorts.get(rmId), this);
-			Thread t = new Thread(rmUdpServer);
-			t.start();
-		}
-		return rmUdpServer;
+
+	private void startUdpServer() {
+		RMUDPServer rmUdpServer = new RMUDPServer(rmUDPPorts.get(rmId), this);
+		Thread t = new Thread(rmUdpServer);
+		t.start();
 	}
-	
-	private HeartBeatDispatcher startHeartBeatDispatcher() {
-		HeartBeatDispatcher dispatcher = null;
-		if (this.hearBeat == null) {
-			dispatcher = new HeartBeatDispatcher(this, this.libraries.keySet());
-			Thread t = new Thread(dispatcher);
-			t.start();
-		}
-		return dispatcher;
+
+	private void startHeartBeatDispatcher() {
+		HeartBeatDispatcher dispatcher = new HeartBeatDispatcher(this, this.libraries.keySet());
+		Thread t = new Thread(dispatcher);
+		t.start();
 	}
-	
+
 	private String getLibraryCorbaName(final String libraryName) {
 		return rmId + "_" + libraryName;
 	}
@@ -104,11 +96,30 @@ public class ReplicaManagerImpl implements ReplicaManager {
 	}
 
 	@Override
+	public void handleHeartBeatResponse(final String libraryName, final String rmIdTarget, final String response) {
+		System.out.println("heartBeat for [" + libraryName + "] in [" + rmIdTarget + "] = " + response);
+		boolean isAlive = Boolean.getBoolean(response);
+		
+		String key = rmIdTarget + "_" + libraryName;
+		if (isAlive) {
+			if (crashedNodes.containsKey(key)) {
+				crashedNodes.remove(key);
+			}
+		} else {
+			if (!crashedNodes.containsKey(key)) {
+				CrashedNode node = new CrashedNode(libraryName, rmIdTarget, this.rmId, System.currentTimeMillis());
+				crashedNodes.put(key, node);
+				// FIXME - notify others
+			}
+		}
+	}
+
+	@Override
 	public boolean processCrashAgreement(String crashedReplicaName, String crashedRmId, String notifierRmId) {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	@Override
 	public String processUdpClientMsg(final String clientMsg) {
 		String message = null;
@@ -118,28 +129,44 @@ public class ReplicaManagerImpl implements ReplicaManager {
 
 			if (msgArray != null && msgArray.length > 2) {
 				String methodName = msgArray[0];
-				String rmId = msgArray[1];
+				String originalRmId = msgArray[1];
 				String[] params = Arrays.copyOfRange(msgArray, 2, msgArray.length);
 
 				if (methodName.equals(UdpEnum.HEART_BEAT.name())) {
 					message = Boolean.toString(processHeartBeat(params[0]));
-				} //else if (methodName.equals(UdpEnum.GET_NON_RETURNERS.name())) {
-					// FIXME - resolve method
-				//}
+				} else if (methodName.equals(UdpEnum.CRASH_AGREEMENT.name())) {
+					message = Boolean.toString(processCrashAgreement(params[0], params[1], originalRmId));
+				}
 			}
 		}
 
 		return message;
 	}
-	
+
 	@Override
 	public String getRmId() {
 		return this.rmId;
 	}
-	
+
 	@Override
 	public Map<String, Integer> getRMUDPPorts() {
 		return this.rmUDPPorts;
+	}
+
+	class CrashedNode {
+		private final String crashedLibraryName;
+		private final String crashedRmId;
+		private final String notifierRmId;
+		private final long timestamp;
+
+		public CrashedNode(String crashedLibraryName, String crashedRmId, String notifierRmId, long timestamp) {
+			super();
+			this.crashedLibraryName = crashedLibraryName;
+			this.crashedRmId = crashedRmId;
+			this.notifierRmId = notifierRmId;
+			this.timestamp = timestamp;
+		}
+
 	}
 
 }
