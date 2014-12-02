@@ -74,10 +74,6 @@ public class ReplicaManagerStarter {
 				Thread.sleep(2000);
 				System.out.println("handleFailure");
 				impl.handleFailure("concordia", this.impl.getRmId());
-				System.out.println("concordia HB: " + impl.processHeartBeat("concordia"));
-				System.out.println("vanier HB: " + impl.processHeartBeat("vanier"));
-				System.out.println("webster HB: " + impl.processHeartBeat("webster"));
-				Thread.sleep(2000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

@@ -11,11 +11,13 @@ public class HeartBeatDispatcher implements Runnable {
 	
 	public static int SLEEP_TIME = 5000;
 	
+	private final ReplicaManager rm;
 	private final String rmId;
 	private final Set<String> libraryNames;
 	private final Map<String, Integer> rmUDPPorts;
 	
 	public HeartBeatDispatcher(final ReplicaManager rm, final Set<String> libraryNames) {
+		this.rm = rm;
 		this.rmId = rm.getRmId();
 		this.libraryNames = libraryNames;
 		this.rmUDPPorts = rm.getRMUDPPorts();
@@ -40,17 +42,12 @@ public class HeartBeatDispatcher implements Runnable {
 		}
 
 	}
-
-	public void dispatchHeartBeats() {
-	}
 	
-	private String dispatchHeartBeat(String libraryName, int port, String rmIdTarget) {
+	private void dispatchHeartBeat(String libraryName, int port, String rmIdTarget) {
 		String clientMsg = RMUDPClient.buildUdpMsg(rmId, UdpEnum.HEART_BEAT, libraryName);
 		String heartBeat = RMUDPClient.sendUdpRequest("localhost", port, clientMsg);
-		// FIXME - process heartBeat
-		System.out.println("heartBeat for [" + libraryName + "] in [" + rmIdTarget + "]  = " + heartBeat);
 		
-		return heartBeat;
+		rm.handleHeartBeatResponse(libraryName, rmIdTarget, heartBeat);
 	}
 
 }

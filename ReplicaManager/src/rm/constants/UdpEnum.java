@@ -1,5 +1,6 @@
 package rm.constants;
 
 public enum UdpEnum {
-	HEART_BEAT;
+	HEART_BEAT,
+	CRASH_AGREEMENT;
 }

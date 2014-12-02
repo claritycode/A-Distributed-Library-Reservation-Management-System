@@ -25,6 +25,15 @@ public interface ReplicaManager {
 	boolean processHeartBeat(String replicaName);
 	
 	/**
+	 * Handle response from Heart Beat to another Replica Manager.
+	 * 
+	 * @param libraryName
+	 * @param rmIdTarget
+	 * @param response
+	 */
+	void handleHeartBeatResponse(String libraryName, String rmIdTarget, final String response);
+	
+	/**
 	 * Process crash agreement request issued by another ReplicaManager.
 	 * 
 	 * @param crashedReplicaName
