@@ -1,3 +1,5 @@
+package Response;
+
 import java.io.Serializable ;
 public class BooleanResponse implements Serializable  {
 	
