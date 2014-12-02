@@ -3,14 +3,36 @@ import org.omg.CosNaming.*;
 import DRMSServices.LibraryInterface;
 import DRMSServices.LibraryInterfaceHelper;
 import DRMSServices.nonReturners;
-
 import java.util.Properties ;
 
+/***
+ * 
+ * @author Parth Patel
+ * A <code>RequestDispatcher</code> stimulates a dispatcher of the client requests to an appropriate call to CORBA Object.
+ *
+ */
 public class RequestDispatcher {
 
+	/**
+	 * Reference to ORB that will make the CORBA Call. This is like a Client orb.
+	 */
 	private ORB orb ;
-	private NamingContext directory ;
+	
+	/**
+	 * Reference to NameService
+	 */
+	private NamingContext directory ;	 
+	
+	/**
+	 * Name of the replica to whose objects requests could be dispatched
+	 */
 	private String replicaName ;
+	
+	/**
+	 * Constructor
+	 * @param args	- The arguments represent additional properties for the orb. They must contain the location of NameService.
+	 * @param newReplicaName - Name of the replica to whose objects requests could be dispatched
+	 */
 	
 	public RequestDispatcher ( String[] args, String newReplicaName ) {
 		replicaName = newReplicaName ;
@@ -34,6 +56,11 @@ public class RequestDispatcher {
 	}
 	
 	
+	/**
+	 * 
+	 * @param call - A ClientCall object representing the call of the client
+	 * @return BooleanResponse - A <code>BooleanResponse</code> represents a boolean response of client call
+	 */
 	public BooleanResponse dispatch ( createAccountCall call ) {
 		
 		// Get the remote object
@@ -47,6 +74,11 @@ public class RequestDispatcher {
 		return new BooleanResponse ( replicaName, result ) ;
 	}
 	
+	/**
+	 * 
+	 * @param call - A ClientCall object representing the call of the client
+	 * @return BooleanResponse - A <code>BooleanResponse</code> represents a boolean response of client call
+	 */
 	public BooleanResponse dispatch ( reserveBookCall call ) {
 		
 		// Get the remote object
@@ -59,6 +91,11 @@ public class RequestDispatcher {
 		return new BooleanResponse ( replicaName, result ) ;
 	}
 	
+	/**
+	 * 
+	 * @param call - A ClientCall object representing the call of the client
+	 * @return BooleanResponse - A <code>BooleanResponse</code> represents a boolean response of client call
+	 */
 	public BooleanResponse dispatch ( reserveInterLibraryCall call ) {
 		
 		// Get the remote object
@@ -71,6 +108,11 @@ public class RequestDispatcher {
 		return new BooleanResponse ( replicaName, result ) ;
 	}
 	
+	/**
+	 * 
+	 * @param call - A ClientCall object representing the call of the client
+	 * @return BooleanResponse - A <code>BooleanResponse</code> represents a boolean response of client call
+	 */
 	public BooleanResponse dispatch ( setDurationCall call ) {
 		
 		// Get the remote object
@@ -83,6 +125,12 @@ public class RequestDispatcher {
 		return new BooleanResponse ( replicaName, result ) ;
 	}
 	
+	/**
+	 * 
+	 * @param call - A ClientCall object representing the call of the client
+	 * @return GetNonReturnersResponse - A <code>GetNonReturnersResponse</code> represents an array of nonReturners returned 
+	 * 
+	 */
 	public GetNonReturnersResponse dispatch ( getNonReturnersCall call ) {
 		
 		// Get the remote object
@@ -97,6 +145,7 @@ public class RequestDispatcher {
 		return new GetNonReturnersResponse ( replicaName, result ) ;
 		
 	}
+	
 	/**
 	 * Helper method - to get a remote object reference based on the String argument
 	 * */

@@ -3,6 +3,5 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/IdlFiles"/>
-	<classpathentry kind="lib" path="/home/parth/comp6231_fall2014/Call_Classes.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
