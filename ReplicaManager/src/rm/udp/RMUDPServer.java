@@ -29,6 +29,7 @@ public class RMUDPServer implements Runnable {
 				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				serverSocket.receive(receivePacket);
 				DatagramPacket sendPacket = processReceivedPacket(receivePacket);
+				// message could be null for FE calls, so don't send response
 				if (sendPacket != null) {
 					serverSocket.send(sendPacket);
 				}
@@ -54,6 +55,7 @@ public class RMUDPServer implements Runnable {
 		System.out.println(rm.getRmId() + " received [" + clientMsg + "] from [" + clientIP + ":" + clientPort);
 		
 		String message = rm.processUdpClientMsg(clientMsg);
+		// message could be null for FE calls
 		if (message != null && message.length() > 0) {
 			byte[] sendData = message.getBytes();
 			sendPacket = new DatagramPacket(sendData, sendData.length, clientIP, clientPort);
