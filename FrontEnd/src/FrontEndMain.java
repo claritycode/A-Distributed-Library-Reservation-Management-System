@@ -9,6 +9,11 @@ import java.util.* ;
 import java.net.* ;
 import java.io.* ;
 
+/**
+ * This is the main class. It creates the necessary FrontEnd objects and accepts client requests
+ * @author Parth Patel
+ *
+ */
 public class FrontEndMain {
 	
 	public static void main ( String[] args ) {
@@ -62,14 +67,10 @@ public class FrontEndMain {
 		
 		FrontEnd[] libraries = new FrontEnd[3] ;
 		InetSocketAddress sequencerAddress = new InetSocketAddress ( 5666 ) ;
-		ArrayList<String> replicaNames = new ArrayList<String>() ;
-		replicaNames.add("One") ;
-		replicaNames.add("two") ;
-		replicaNames.add("three") ;
 		
-		libraries[0] = new FrontEnd ( "Concordia University", sequencerAddress, replicaNames ) ;
-		libraries[1] = new FrontEnd ( "McGill University", sequencerAddress, replicaNames ) ;
-		libraries[2] = new FrontEnd ( "Vanier College", sequencerAddress, replicaNames ) ;
+		libraries[0] = new FrontEnd ( "Concordia University", sequencerAddress) ;
+		libraries[1] = new FrontEnd ( "McGill University", sequencerAddress ) ;
+		libraries[2] = new FrontEnd ( "Vanier College", sequencerAddress) ;
 		
 		NameComponent[] name = new NameComponent[1] ;
 		name[0] = new NameComponent() ;
