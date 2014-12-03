@@ -1,4 +1,5 @@
 import java.net.* ;
+import java.util.HashMap ;
 import java.io.* ;
 import DRMSServices.LibraryInterfacePOA;
 import DRMSServices.nonReturners;
@@ -11,6 +12,7 @@ public class FrontEnd extends LibraryInterfacePOA {
 	private InetSocketAddress sequencerAddress ;
 	private ArrayList<String> replicaNames ;
 	private String libraryName ;
+	private HashMap< String, InetSocketAddress > replicaManagerDatabase ;
 	
 	/**
 	 * @return the systemProperty
@@ -30,6 +32,11 @@ public class FrontEnd extends LibraryInterfacePOA {
 		libraryName = newLibraryName ;
 		sequencerAddress = newAddress ;
 		replicaNames = newNames ;
+		replicaManagerDatabase = new HashMap< String, InetSocketAddress > () ;
+	}
+	
+	public void addReplicaManager ( String replicaManagerName, InetAddress ipAddress, int portNo ) {
+		replicaManagerDatabase.put( replicaManagerName, new InetSocketAddress( ipAddress, portNo )) ;
 	}
 	
 	public String getName () {
@@ -96,6 +103,7 @@ public class FrontEnd extends LibraryInterfacePOA {
 		
 		for ( BooleanResponse r: response ) {
 			if ( r.getResult() != majorityResult ) {
+				notifySoftwareBug ( r.getReplicaName(), libraryName ) ;
 				// TODO ReplicaManager faultyReplica = getRemoteObject ( r.getReplicaName() )
 				return majorityResult ;
 			}
@@ -104,6 +112,24 @@ public class FrontEnd extends LibraryInterfacePOA {
 		}
 		
 		return false ;
+	}
+	
+	private void notifySoftwareBug ( String replicaName, String libraryName ) {
+		
+		DatagramSocket socket = null ;
+		try {
+			
+			socket = new DatagramSocket () ;
+			String data = replicaName + ":" + libraryName ;
+			byte[] sendBuffer = data.getBytes() ;
+			DatagramPacket sendPacket = new DatagramPacket ( sendBuffer, sendBuffer.length, 
+					replicaManagerDatabase.get(replicaName).getAddress(), replicaManagerDatabase.get(replicaName).getPort() ) ;
+			socket.send(sendPacket);
+		} catch ( SocketException e ) {
+			System.out.println ( "Exception: " + e.getMessage() ) ;
+		} catch ( IOException e ) {
+			System.out.println ( "Exception: " + e.getMessage() ) ;
+		} 
 	}
 	
 	private boolean receiveFirstReply ( DatagramSocket socket ) throws SocketException, IOException {
