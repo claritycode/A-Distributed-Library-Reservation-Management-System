@@ -1,0 +1,82 @@
+ Tried to create account at concordia
+username alrady exists
+login Sherbrooke
+Login Successful
+reserving book Remotely
+ book reserved
+admin Login
+admin Login
+login Mcgill
+Login Successful
+reserving book Remotely
+ book reserved
+login Mcgill
+Login Successful
+reserving book Remotely
+ book reserved
+login Sherbrooke
+Login Successful
+reserving book Remotely
+ book reserved
+login Concordia
+Login Successful
+reserving book Remotely
+ book reserved
+login Sherbrooke
+Login Successful
+reserving book Remotely
+ book reserved
+login Mcgill
+Login Successful
+reserving book Remotely
+ book reserved
+login Concordia
+Login Successful
+reserving book Remotely
+ book reserved
+login Sherbrooke
+Login Successful
+reserving book Remotely
+ book reserved
+login Mcgill
+Login Successful
+reserving book Remotely
+ book reserved
+login Concordia
+Login Successful
+reserving book Remotely
+ book reserved
+login Sherbrooke
+Login Successful
+reserving book Remotely
+ book reserved
+login Mcgill
+Login Successful
+reserving book Remotely
+ book reserved
+login Concordia
+Login Successful
+reserving book Remotely
+ book reserved
+login Sherbrooke
+Login Successful
+reserving book Remotely
+ book reserved
+login Mcgill
+Login Successful
+reserving book Remotely
+ book reserved
+login Mcgill
+Login Successful
+reserving book Remotely
+ book reserved
+login Concordia
+Login Successful
+reserving book Remotely
+ book reserved
+ Tried to create account at concordia
+login Concordia
+Login Successful
+reserving book Remotely
+ book reserved
+admin Login

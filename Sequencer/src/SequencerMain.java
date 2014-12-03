@@ -1,14 +1,30 @@
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
 
 
 public class SequencerMain extends Thread implements Serializable
 {
-	Integer _sequenceNumber;
+	Integer _sequenceNumber=0;
 	DatagramSocket _sequencerSocket=null;
+	SequencerMain object;
+	DatagramPacket request;
+	ByteArrayInputStream bais;
+	ObjectInputStream ois;
+	byte array[];
+	InetAddress ip;
+	ByteArrayOutputStream boas;
+	ObjectOutputStream oos;
+	
+	int portNumberOfReplica1;
+	int portNumberOfReplica2;
+	int portNumberOfReplica3;
 	//SequencerUDPHandlerThread []ThreadArray;
 	public void run()
 	{
@@ -19,28 +35,25 @@ public class SequencerMain extends Thread implements Serializable
 		try
 		{
 			_sequencerSocket = new DatagramSocket(9988);
-		} 
-		catch (SocketException e1) {
-			e1.printStackTrace();
-		}
+		
 		while(true)
 		{
-			try
-			{
+			
 				
 				System.out.println("In the while loop of the sequencer main class");
 			
 			DatagramPacket request= new DatagramPacket(recieveRequestArray,recieveRequestArray.length);
 			_sequencerSocket.receive(request);
 			System.out.println("The Request recieved ");
-			SequencerUDPHandlerThread newThread= new SequencerUDPHandlerThread(this, request);
-			newThread.start();
+			/*SequencerUDPHandlerThread newThread= new SequencerUDPHandlerThread(this, request);
+			newThread.start();*/
 			//ThreadArray[i]= new SequencerUDPHandlerThread(this,request);
 			//Thread newThread= new Thread(ThreadArray[i]);
 			//newThread.start();
 			//ThreadArray[i].start();
-			i++;
-			System.out.println("The Request  forwarded to the Thread");
+			/*i++;
+			System.out.println("The Request  forwarded to the Thread");*/
+		}
 			}
 			catch(Exception e)
 			{
@@ -48,7 +61,7 @@ public class SequencerMain extends Thread implements Serializable
 			}
 		}
 		
-	}
+	
 
 
 	
