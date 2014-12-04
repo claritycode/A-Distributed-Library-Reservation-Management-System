@@ -74,7 +74,7 @@ public class DRMSServer extends DRMSServices.LibraryInterfacePOA implements Runn
 			
 		}
 		
-		orb.run();
+		//orb.run();
 		System.out.println("the ORB just RUN");
 		//concordiaServer.exportserver1();
 		}

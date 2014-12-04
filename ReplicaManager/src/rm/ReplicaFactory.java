@@ -25,7 +25,11 @@ public class ReplicaFactory {
 		System.out.println("createLibrary: binding library [" + libraryName + "] to corba with naming [" + libraryCorbaName + "]");
 		
 		// create servant and register it with the ORB
-		LibraryPOAImpl impl = new LibraryPOAImpl(libraryName); // FIXME - use any of the 3 implementations
+		LibraryPOAImpl impl = new LibraryPOAImpl(libraryName);
+		// FIXME - use any of the 3 implementations
+		// Gustavo - LibraryPOAImpl
+		// Harpreet - Webserver.DRMSMcgill, DRMSServer, or DRMSSherbrooke (vanier)
+		// Parth - Library
 
 		// get object reference from the servant
 		org.omg.CORBA.Object ref = rootpoa.servant_to_reference(impl);

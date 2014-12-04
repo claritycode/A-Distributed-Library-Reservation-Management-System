@@ -173,7 +173,7 @@ public abstract class LibraryInterfacePOA extends org.omg.PortableServer.Servant
 
 
   /**
-  		 * set byzantine flag to say if replica with give wrong responses.
+  		 * Set byzantine flag to say if replica will give wrong responses.
   		 * @param byzantineFlag True if replica should generate software errors.
   		 */
        case 6:  // DRMSServices/LibraryInterface/setByzantineFlag
