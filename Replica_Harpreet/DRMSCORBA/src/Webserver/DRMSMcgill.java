@@ -76,6 +76,14 @@ public class DRMSMcgill extends DRMSServices.LibraryInterfacePOA implements Runn
 			book.put(index,new ArrayList<BookDetails>());
 			
 		}
+		this.addBook("book1","author1",5);
+		this.addBook("book2","author2",1);
+		this.addBook("book5","author5",3);
+		this.addBook("book6","author6",3);
+		this.createAccount("name_m0","lastName0","email_m0","phone0","username_m1","password1","mcgill");
+		this.createAccount("name_m1","lastName1","email_m1","phone1","username_m1","password2","mcgill");
+		this.createAccount("name_m2","lastName2","email_m2","phone2","username_m1","password3","mcgill");
+		
 		//orbMcgill.run();
 		//mcgillServer.exportserver1();			==================================================EXPORT SERVER
 		
@@ -100,7 +108,15 @@ public class DRMSMcgill extends DRMSServices.LibraryInterfacePOA implements Runn
 		{
 			try
 			{
-				this.addBook("book3", "author3",4);
+				this.addBook("book1","author1",5);
+				this.addBook("book2","author2",1);
+				this.addBook("book5","author5",3);
+				this.addBook("book6","author6",3);
+				this.createAccount("name_m0","lastName0","email_m0","phone0","username_m1","password1","mcgill");
+				this.createAccount("name_m1","lastName1","email_m1","phone1","username_m1","password2","mcgill");
+				this.createAccount("name_m2","lastName2","email_m2","phone2","username_m1","password3","mcgill");
+				
+				//this.addBook("book3", "author3",4);
 			_serverSocket=new DatagramSocket(6001);			// initializing the Datagram Socket for Specific Port Number of the Server
 			System.out.println("server started");
 			int i=0;
