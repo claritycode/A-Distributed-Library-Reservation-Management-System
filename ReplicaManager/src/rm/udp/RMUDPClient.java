@@ -12,6 +12,7 @@ public class RMUDPClient {
 
 	public static final int BYTES = 1024;
 	public static final int TIMEOUT = 1000;
+	public static final String DEFAULT_HOST = "localhost";
 	
 	public static String sendUdpRequest(final String host, final int serverPort, final String clientMsg) {
 		String message = null;

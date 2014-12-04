@@ -2,6 +2,7 @@ package rm;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -24,7 +25,7 @@ public class ReplicaManagerImpl implements ReplicaManager {
 	private final ORB orb;
 	private final POA rootpoa;
 	private final Map<String, Integer> rmUDPPorts;
-	private final Map<String, CrashedNode> crashedNodes;
+	private final HashSet<String> crashedNodes;
 
 	public ReplicaManagerImpl(final String rmId, final List<String> libraryNames, final Map<String, Integer> rmUDPPorts,
 			final ORB orb, final POA rootpoa) throws UserException {
@@ -34,7 +35,7 @@ public class ReplicaManagerImpl implements ReplicaManager {
 		this.libraries = new HashMap<String, LibraryInterface>();
 		this.startLibraries(libraryNames);
 		this.rmUDPPorts = rmUDPPorts;
-		this.crashedNodes = new HashMap<String, CrashedNode>();
+		this.crashedNodes = new HashSet<String>();
 
 		// create and start the udp server thread and heart beat thread
 		startUdpServer();
@@ -61,6 +62,10 @@ public class ReplicaManagerImpl implements ReplicaManager {
 	}
 
 	private String getLibraryCorbaName(final String libraryName) {
+		return getLibraryCorbaName(rmId, libraryName);
+	}
+
+	private String getLibraryCorbaName(final String rmId, final String libraryName) {
 		return rmId + "_" + libraryName;
 	}
 
@@ -68,6 +73,7 @@ public class ReplicaManagerImpl implements ReplicaManager {
 	public void handleFailure(String educationalInstitution, String rmId) {
 		// If replica manager is not this one, just ignore it. That just here to comply with requirements: "If any one of the
 		// replicas produces incorrect result, the FE informs all the RMs about that replica."
+		// FIXME - add counter to replace only after 3rd error
 		if (rmId != null && rmId.equals(this.rmId)) {
 			replaceLibrary(educationalInstitution);
 		}
@@ -102,38 +108,53 @@ public class ReplicaManagerImpl implements ReplicaManager {
 		System.out.println("heartBeat for [" + libraryName + "] in [" + rmIdTarget + "] = " + response);
 		boolean isAlive = Boolean.getBoolean(response);
 		
-		String key = rmIdTarget + "_" + libraryName;
+		final String key = getLibraryCorbaName(rmIdTarget, libraryName);
 		if (isAlive) {
 			// if node is alive, remove from crashed nodes map
-			if (crashedNodes.containsKey(key)) {
+			if (crashedNodes.contains(key)) {
 				crashedNodes.remove(key);
 			}
 		} else {
 			// if it just found a node is dead, put it in crashed nodes map and notify other RMs
-			if (!crashedNodes.containsKey(key)) {
-				CrashedNode node = new CrashedNode(libraryName, rmIdTarget, this.rmId, System.currentTimeMillis());
-				crashedNodes.put(key, node);
+			if (!crashedNodes.contains(key)) {
+				crashedNodes.add(key);
 				// notify others
-				dispatchCrashedNotification(libraryName, rmIdTarget);
+				dispatchCrashAgreement(libraryName, rmIdTarget);
 			}
 		}
 	}
 	
-	private void dispatchCrashedNotification(final String libraryName, final String rmIdTarget) {
-		// source: class pdf about Election and Mutual Exclusion Consensus
+	private void dispatchCrashAgreement(final String libraryName, final String rmIdTarget) {
+		boolean agreement = false;
+		final String host = RMUDPClient.DEFAULT_HOST;
 		for (Entry<String, Integer> entry : rmUDPPorts.entrySet()) {
-			if (!entry.getKey().equals(rmId)) {
+			// just get agreement with 3rd RM
+			if ((!entry.getKey().equals(rmId)) && (!entry.getKey().equals(rmIdTarget))) {
 				String clientMsg = RMUDPClient.buildUdpMsg(rmId, UdpEnum.CRASH_AGREEMENT, libraryName, rmIdTarget);
-				String heartBeat = RMUDPClient.sendUdpRequest("localhost", entry.getValue(), clientMsg);
-				// FIXME - consensus algorithm
+				int serverPort = entry.getValue();
+				System.out.println(rmId + " sending [" + clientMsg + "] to [" + host + ":" + serverPort);
+				agreement = Boolean.getBoolean(RMUDPClient.sendUdpRequest(host, serverPort, clientMsg));
 			}
+		}
+		// if RMs agree, notify rmIdTarget and clean crashedNodes
+		if (agreement) {
+			String clientMsg = RMUDPClient.buildUdpMsg(rmId, UdpEnum.REMOVE_CRASHED, libraryName);
+			int serverPort = rmUDPPorts.get(rmIdTarget);
+			System.out.println(rmId + " sending [" + clientMsg + "] to [" + host + ":" + serverPort);
+			RMUDPClient.sendUdpRequest(host, serverPort, clientMsg);
+			String key = getLibraryCorbaName(rmIdTarget, libraryName);
+			crashedNodes.remove(key);
 		}
 	}
 
 	@Override
-	public boolean processCrashAgreement(String crashedReplicaName, String crashedRmId, String notifierRmId) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean processCrashAgreement(String crashedLibraryName, String crashedRmId, String notifierRmId) {
+		boolean agreed = false;
+		String key = getLibraryCorbaName(crashedRmId, crashedLibraryName);
+		if (crashedNodes.contains(key)) {
+			agreed = true;
+		}
+		return agreed;
 	}
 
 	@Override
@@ -148,12 +169,15 @@ public class ReplicaManagerImpl implements ReplicaManager {
 				String originalRmId = msgArray[1];
 				String[] params = Arrays.copyOfRange(msgArray, 2, msgArray.length);
 				if (methodName.equals(UdpEnum.FAILURE.name())) {
-					// call from Front End to handle failure don't send back any message
+					// call from Front End to handle failure doesn't send back any message
 					handleFailure(params[0], originalRmId);
 				} else if (methodName.equals(UdpEnum.HEART_BEAT.name())) {
 					message = Boolean.toString(processHeartBeat(params[0]));
 				} else if (methodName.equals(UdpEnum.CRASH_AGREEMENT.name())) {
 					message = Boolean.toString(processCrashAgreement(params[0], params[1], originalRmId));
+				} else if (methodName.equals(UdpEnum.REMOVE_CRASHED.name())) {
+					// call to remove crashed after agreement doesn't send back any message
+					replaceLibrary(params[0]);
 				}
 			}
 		}
@@ -169,22 +193,6 @@ public class ReplicaManagerImpl implements ReplicaManager {
 	@Override
 	public Map<String, Integer> getRMUDPPorts() {
 		return this.rmUDPPorts;
-	}
-
-	class CrashedNode {
-		private final String crashedLibraryName;
-		private final String crashedRmId;
-		private final String notifierRmId;
-		private final long timestamp;
-
-		public CrashedNode(String crashedLibraryName, String crashedRmId, String notifierRmId, long timestamp) {
-			super();
-			this.crashedLibraryName = crashedLibraryName;
-			this.crashedRmId = crashedRmId;
-			this.notifierRmId = notifierRmId;
-			this.timestamp = timestamp;
-		}
-
 	}
 
 }
