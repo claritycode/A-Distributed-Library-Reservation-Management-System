@@ -172,7 +172,7 @@ public class FrontEnd extends LibraryInterfacePOA {
 			
 			// The nofitication sended to the replica manager is in the following format
 			// name of the replia:Name of the library
-			String data = replicaName + ":" + libraryName ;
+			String data = "FAILURE" + ":" + replicaName + ":" + libraryName ;
 			byte[] sendBuffer = data.getBytes() ;
 			DatagramPacket sendPacket = new DatagramPacket ( sendBuffer, sendBuffer.length, 
 					replicaManagerDatabase.get(replicaName).getAddress(), replicaManagerDatabase.get(replicaName).getPort() ) ;
