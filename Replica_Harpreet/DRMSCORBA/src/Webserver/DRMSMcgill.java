@@ -48,7 +48,7 @@ public class DRMSMcgill extends DRMSServices.LibraryInterfacePOA implements Runn
 		this.name=name;
 		this.byzantineflag=false;
 		
-		String args[]=null;
+		/*String args[]=null;
 		ORB orbMcgill =ORB.init(args, null);	//Orb is intialized 
 		POA rootPOA= POAHelper.narrow(orbMcgill.resolve_initial_references("RootPOA"));// To get the JAVAReference from the CORBA Reference
 		
@@ -60,7 +60,7 @@ public class DRMSMcgill extends DRMSServices.LibraryInterfacePOA implements Runn
 		file.println(ior);
 		file.close();
 		rootPOA.the_POAManager().activate();
-		System.out.println("The Server is now Running");
+		System.out.println("The Server is now Running");*/
 		Thread DRMSMcgillThread= new Thread(this);//Creating new Thread so that the server keep on listening at the Port for new UDP Request
 		DRMSMcgillThread.start();
 		//(new DRMSMcgill()).start();

@@ -34,7 +34,6 @@ public class DRMSSherbrooke extends DRMSServices.LibraryInterfacePOA implements 
 	int portNumber;
 	String name;
 	boolean byzantineflag;
-	
 	public DRMSSherbrooke(int portNumber,String name)
 	{
 		try
