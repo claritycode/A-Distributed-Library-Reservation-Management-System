@@ -47,9 +47,11 @@ public class FrontEndMain {
 				System.out.println ( "2. High Availibility" ) ;
 				int choice = Integer.parseInt(r.readLine()) ;
 				if ( choice == 1 ) {
+					System.out.println ( "The Fault Tolerant System is now ready to accept client requests" ) ;
 					FrontEnd.setSystemProperty("Fault Tolerance");
 					break ;
 				} else if ( choice == 2 ) {
+					System.out.println ( "The Highly Available System is now ready to accept client requests" ) ;
 					FrontEnd.setSystemProperty( "High Availability" );
 					break ;
 				} else {
@@ -68,9 +70,9 @@ public class FrontEndMain {
 		FrontEnd[] libraries = new FrontEnd[3] ;
 		InetSocketAddress sequencerAddress = new InetSocketAddress ( 9988 ) ;
 		
-		libraries[0] = new FrontEnd ( "Concordia University", sequencerAddress) ;
-		libraries[1] = new FrontEnd ( "McGill University", sequencerAddress ) ;
-		libraries[2] = new FrontEnd ( "Vanier College", sequencerAddress) ;
+		libraries[0] = new FrontEnd ( "concordia", sequencerAddress) ;
+		libraries[1] = new FrontEnd ( "mcgill", sequencerAddress ) ;
+		libraries[2] = new FrontEnd ( "sherbrooke", sequencerAddress) ;
 		
 		try {
 			FrontEnd.addReplicaManager("rm1", InetAddress.getLocalHost(), 10101);
@@ -115,9 +117,9 @@ public class FrontEndMain {
 		// run the underlying CORBA ORB. It is now ready to receive requests from clients
 		orb.run();
 		
-		System.out.println("The following three Libraries are currently part of the DRMS");
-		System.out.println("1. Concordia University");
-		System.out.println("2. McGill University");
-		System.out.println("3. Vanier College");
+		System.out.println("The following " +  libraries.length + " Libraries are currently part of the DRMS");
+		for ( FrontEnd l : libraries ) {
+			System.out.println ( l.getName() ) ;
+		}
 	}
 }

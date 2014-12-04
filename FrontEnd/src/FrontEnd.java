@@ -166,7 +166,6 @@ public class FrontEnd extends LibraryInterfacePOA {
 			// If this result has a bug then inform the concerned replica manager
 			if ( r.getResult() != majorityResult ) {
 				notifySoftwareBug ( r.getReplicaName(), libraryName ) ;
-				// TODO ReplicaManager faultyReplica = getRemoteObject ( r.getReplicaName() )
 				return majorityResult ;
 			}
 		}

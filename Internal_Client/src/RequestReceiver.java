@@ -65,20 +65,22 @@ public class RequestReceiver implements Runnable {
 	 * The thread runs infinitely waiting for requests and serving them as they arrive
 	 */
 	public void run () {
+		
 		try {
-			byte[] receiveBuffer = new byte[512] ;
-			DatagramPacket receivePacket = new DatagramPacket ( receiveBuffer, receiveBuffer.length ) ;
+			System.out.println ( "The Internal Client is ready to accept requests from sequencer" ) ; 
 
 			// Infinite Loop
 			while ( true ) {
-				
+				byte[] receiveBuffer = new byte[512] ;
+				DatagramPacket receivePacket = new DatagramPacket ( receiveBuffer, receiveBuffer.length ) ;	
 				socket.receive( receivePacket );
 				
 				// Deserialize Request
 				ByteArrayInputStream bs = new ByteArrayInputStream ( receivePacket.getData() ) ;
 				ObjectInputStream os = new ObjectInputStream ( bs ) ;
 				ClientCall request = (ClientCall) os.readObject() ;
-				
+				os.close() ;
+				bs.close() ;
 				// Check the sequence Number before dispatching the request furthur
 				if ( request.getSequenceNumber() == sequenceNumber ) {
 					Object result = callMethod ( request ) ;		// Call Method
@@ -118,10 +120,12 @@ public class RequestReceiver implements Runnable {
 	 * @param request - The request object that represents the call
 	 */
 	private void sendResponse ( Object result, ClientCall request ) {
+		ByteArrayOutputStream bs = null ;
+		ObjectOutputStream os = null ;
 		try {
 			// Serialize the response object
-			ByteArrayOutputStream bs = new ByteArrayOutputStream () ;
-			ObjectOutputStream os = new ObjectOutputStream ( bs ) ;
+			bs  = new ByteArrayOutputStream () ;
+			os = new ObjectOutputStream ( bs ) ;
 			os.writeObject(result);
 			
 			byte[] sendBuffer = bs.toByteArray() ;
@@ -130,6 +134,14 @@ public class RequestReceiver implements Runnable {
 			socket.send ( sendPacket ) ;			
 		} catch ( IOException e ) {
 			System.out.println ( "Exception: " + e.getMessage() ) ;
+		} finally {
+			if ( os != null ) {
+				try {
+					os.close() ;
+				} catch ( IOException e ) {
+					System.out.println ( "Exception: " + e.getMessage() ) ;
+				}
+			}
 		}
 
 	}
