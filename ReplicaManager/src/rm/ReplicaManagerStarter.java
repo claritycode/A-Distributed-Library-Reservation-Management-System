@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -30,17 +29,18 @@ public class ReplicaManagerStarter {
 		try {
 			printInstructions(args);
 
-			if (args != null && args.length == 4) {
+			if (args != null && args.length == 1) {
 				String rmId = args[0];
 				Map<String, String> properties = loadProperties();
 
 				ORB orb = getORB(properties);
 				POA rootpoa = getRootPOA(orb);
 
-				final List<String> libraryNames = Arrays.asList(new String[] { args[1], args[2], args[3] });
+				final String[] libraryNames = properties.get("libraries").split(",");
+				final String[] libraryPorts = properties.get(rmId + ".udp.ports").split(",");
 				final Map<String, Integer> rmUDPPorts = getRMUDPPorts(properties);
 
-				final ReplicaManagerImpl impl = new ReplicaManagerImpl(rmId, libraryNames, rmUDPPorts, orb, rootpoa);
+				final ReplicaManagerImpl impl = new ReplicaManagerImpl(rmId, libraryNames, libraryPorts, rmUDPPorts, orb, rootpoa);
 
 				// FIXME - remove test class (TempClass)
 				Thread t = new Thread(new ReplicaManagerStarter().new TempClass(impl));
@@ -131,9 +131,7 @@ public class ReplicaManagerStarter {
 
 		System.out.println("Instructions:");
 		System.out.println("1) from unix command line run: 'orbd -ORBInitialPort 1050&'");
-		System.out.println("2) start all 3 replicas of this Replica Manager");
-		System.out.println("3) run this class with the replica with 4 arguments: id as first argument and all libraries "
-				+ "names as other 3 arguments. e.g.: rm1 concordia1 vanier2 webster1");
+		System.out.println("2) run this class with the replica manager id as the only argument. e.g.: rm1");
 	}
 
 	/**
