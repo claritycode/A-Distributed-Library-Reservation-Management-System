@@ -44,7 +44,7 @@ public class DRMSServer extends DRMSServices.LibraryInterfacePOA implements Runn
 			this.name=name;
 			this.byzantineflag=false;
 		
-		String args[]=null;
+		/*String args[]=null;
 		ORB orb =ORB.init(args, null);	//Orb is intialized 
 		POA rootPOA= POAHelper.narrow(orb.resolve_initial_references("RootPOA"));// To get the JAVAReference from the CORBA Reference
 		
@@ -58,7 +58,7 @@ public class DRMSServer extends DRMSServices.LibraryInterfacePOA implements Runn
 		System.out.println("the file closed");
 		rootPOA.the_POAManager().activate();
 		System.out.println("the POAMAnager");
-		System.out.println("The Server is now Running");
+		System.out.println("The Server is now Running");*/
 		Thread 	concordiaServerThread=new Thread(this);//Creating new Thread so that the server keep on listening at the Port for new UDP Request
 		concordiaServerThread.start();
 		for(Character i='a';i<='z';i++)

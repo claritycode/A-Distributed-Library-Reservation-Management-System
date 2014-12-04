@@ -41,7 +41,7 @@ public class DRMSSherbrooke extends DRMSServices.LibraryInterfacePOA implements 
 		this.portNumber=portNumber;
 		this.name=name;
 		this.byzantineflag=false;
-		String args[]=null;
+		/*String args[]=null;
 		ORB orbSherbrooke =ORB.init(args, null);				//Orb is intialized 
 		POA rootPOA= POAHelper.narrow(orbSherbrooke.resolve_initial_references("RootPOA"));// To get the JAVAReference from the CORBA Reference
 		
@@ -54,6 +54,7 @@ public class DRMSSherbrooke extends DRMSServices.LibraryInterfacePOA implements 
 		file.close();
 		rootPOA.the_POAManager().activate();
 		System.out.println("The Server is now Running");
+*/
 		Thread DRMSSherbrookeThread= new Thread(this);
 		DRMSSherbrookeThread.start();
 		//(new DRMSSherbrooke()).start();
