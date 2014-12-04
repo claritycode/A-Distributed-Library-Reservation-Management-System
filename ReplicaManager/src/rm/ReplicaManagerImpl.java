@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.UserException;
@@ -25,7 +26,8 @@ public class ReplicaManagerImpl implements ReplicaManager {
 	private final ORB orb;
 	private final POA rootpoa;
 	private final Map<String, Integer> rmUDPPorts;
-	private final HashSet<String> crashedNodes;
+	private final Set<String> crashedNodes;
+	private final Map<String, Integer> libraryFailures;
 
 	public ReplicaManagerImpl(final String rmId, final List<String> libraryNames, final Map<String, Integer> rmUDPPorts,
 			final ORB orb, final POA rootpoa) throws UserException {
@@ -33,9 +35,11 @@ public class ReplicaManagerImpl implements ReplicaManager {
 		this.orb = orb;
 		this.rootpoa = rootpoa;
 		this.libraries = new HashMap<String, LibraryInterface>();
-		this.startLibraries(libraryNames);
 		this.rmUDPPorts = rmUDPPorts;
 		this.crashedNodes = new HashSet<String>();
+		this.libraryFailures = new HashMap<String, Integer>();
+		
+		this.startLibraries(libraryNames);
 
 		// create and start the udp server thread and heart beat thread
 		startUdpServer();
@@ -46,6 +50,7 @@ public class ReplicaManagerImpl implements ReplicaManager {
 		for (String libraryName : libraryNames) {
 			LibraryInterface library = ReplicaFactory.createLibrary(getLibraryCorbaName(libraryName), libraryName, rootpoa, orb);
 			this.libraries.put(libraryName, library);
+			this.libraryFailures.put(libraryName, 0);
 		}
 	}
 
@@ -58,7 +63,7 @@ public class ReplicaManagerImpl implements ReplicaManager {
 	private void startHeartBeatDispatcher() {
 		HeartBeatDispatcher dispatcher = new HeartBeatDispatcher(this, this.libraries.keySet());
 		Thread t = new Thread(dispatcher);
-		t.start();
+		// t.start(); FIXME - put back
 	}
 
 	private String getLibraryCorbaName(final String libraryName) {
@@ -73,9 +78,14 @@ public class ReplicaManagerImpl implements ReplicaManager {
 	public void handleFailure(String educationalInstitution, String rmId) {
 		// If replica manager is not this one, just ignore it. That just here to comply with requirements: "If any one of the
 		// replicas produces incorrect result, the FE informs all the RMs about that replica."
-		// FIXME - add counter to replace only after 3rd error
 		if (rmId != null && rmId.equals(this.rmId)) {
-			replaceLibrary(educationalInstitution);
+			int count = libraryFailures.get(educationalInstitution);
+			System.out.println("count = " + count); // TODO - remove sysout
+			libraryFailures.put(educationalInstitution, ++count);
+			if (count == 3) {
+				replaceLibrary(educationalInstitution);
+				libraryFailures.put(educationalInstitution, 0);
+			}
 		}
 	}
 

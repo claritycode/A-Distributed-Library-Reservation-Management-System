@@ -72,7 +72,22 @@ public class ReplicaManagerStarter {
 		public void run() {
 			try {
 				Thread.sleep(2000);
-				System.out.println("handleFailure");
+				System.out.println("handleFailure 1");
+				impl.handleFailure("concordia", this.impl.getRmId());
+				Thread.sleep(100);
+				System.out.println("handleFailure 2");
+				impl.handleFailure("concordia", this.impl.getRmId());
+				Thread.sleep(100);
+				System.out.println("handleFailure 3");
+				impl.handleFailure("concordia", this.impl.getRmId());
+				Thread.sleep(100);
+				System.out.println("handleFailure 4");
+				impl.handleFailure("concordia", this.impl.getRmId());
+				Thread.sleep(100);
+				System.out.println("handleFailure 5");
+				impl.handleFailure("concordia", this.impl.getRmId());
+				Thread.sleep(100);
+				System.out.println("handleFailure 6");
 				impl.handleFailure("concordia", this.impl.getRmId());
 			} catch (InterruptedException e) {
 				e.printStackTrace();
