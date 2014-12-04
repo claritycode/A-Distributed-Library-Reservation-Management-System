@@ -23,6 +23,8 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 	private FileWriter logFile ;
 	private FileWriter adminFile;
 	private DatagramSocket udpServerSocket ;
+	private boolean toShutDown = false ;
+	private boolean toCreateBug	= false ;
 	
 	public String getName () {
 		return name ;
@@ -600,8 +602,10 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 			System.out.println ( "An exception: " + e.getMessage() ) ;
 		}
 		
+		
+		// Stop listening for requests only when told to shutdown
 		// Infinite loop listening mode
-		while ( true ) {
+		while ( ! toShutDown ) {
 			try {
 				byte[] buffer = new byte[512] ;
 				DatagramPacket initial = new DatagramPacket(buffer, buffer.length);
@@ -676,12 +680,17 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 
 	@Override
 	public void shutDown() {
+		toShutDown = true ;
+		if ( udpServerSocket != null ) {
+			udpServerSocket.close();			
+		}
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void setByzantineFlag(boolean byzantineFlag) {
+		toCreateBug = true ;
 		// TODO Auto-generated method stub
 		
 	}
