@@ -1,4 +1,4 @@
-package Response;
+package Call.Response;
 
 import java.io.Serializable ;
 public class GetNonReturnersResponse implements Serializable {
