@@ -76,6 +76,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 			
 			studentFiles.mkdir();	// Create directory
 			
+			
 			// Start UDP Server
 			Thread UDPServer = new Thread ( this ) ;
 			UDPServer.start();
@@ -321,7 +322,9 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 		// The server sends the message on UDP port of the other servers
 		// A server gets this UDP ports from a user define Registry service that maintains the UDP Port of all servers
 		// Helper method - It gives address (UDP port number) of other libraries as an object of LibraryAddress
-		ArrayList<LibraryAddress> others = getOtherLibraries() ;
+		
+		ArrayList<LibraryAddress> others = getOtherLibraries () ; ;
+		
 		
 		boolean result ;
 		
@@ -401,7 +404,8 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 		studentList = result.toArray(studentList) ;
 
 		// Get addresses of other libraries
-		ArrayList<LibraryAddress> others = getOtherLibraries() ;
+		ArrayList<LibraryAddress> others = getOtherLibraries() ; ;
+		
 
 		// Final Result
 		nonReturners[] resultArray = new nonReturners[others.size() + 1] ;
@@ -594,6 +598,7 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 		// Register port number with Registry
 		// Message format : operation code ( 0 or 10 ;; (delimiter) ;; name of library
 		try {
+						
 			byte[] sendBuf = ("0" + ";;" + name).getBytes() ;
 			DatagramPacket sendPack = new DatagramPacket ( sendBuf, sendBuf.length, 
 						InetAddress.getLocalHost(), 8000 ) ;
@@ -629,7 +634,8 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 	// Helper method
 	// Obtains Library Addresses of peer servers from Registry
 	// Sends UDP messages and receives UDP messages from registry
-	private ArrayList<LibraryAddress> getOtherLibraries () {
+	private ArrayList<LibraryAddress> getOtherLibraries ()  {
+		
 		DatagramSocket sock = null ;
 		ArrayList<LibraryAddress> result = null ;
 		try {	
