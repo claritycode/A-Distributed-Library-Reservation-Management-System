@@ -42,9 +42,9 @@ public class LibraryServer {
 		// Create three specific libraries
 		Library libraries[] = new Library[3] ;
 		
-		libraries[0] = new Library ( "Concordia University", 6000 ) ;
-		libraries[1] = new Library ( "McGill University", 6001 ) ;
-		libraries[2] = new Library ( "Vanier College", 6004 ) ;	
+		libraries[0] = new Library ( "concordia", 6000 ) ;
+		libraries[1] = new Library ( "mcgill", 6001 ) ;
+		libraries[2] = new Library ( "sherbrooke", 6004 ) ;	
 		
 		
 		NameComponent[] name = new NameComponent[1] ;
@@ -84,10 +84,11 @@ public class LibraryServer {
 		libraries[1].addBook("name0", "author0", 1) ;
 		libraries[2].addBook("name0", "author0", 1) ;
 		
-		System.out.println("The following three Libraries are currently part of the DRMS");
-		System.out.println("1. Concordia University");
-		System.out.println("2. McGill University");
-		System.out.println("3. Vanier College");
+		System.out.println("The following " +  libraries.length + " Libraries are currently part of the DRMS");
+		for ( Library l : libraries ) {
+			System.out.println ( l.getName() ) ;
+		}
+		
 		
 		try {
 			// Activate POA manager
