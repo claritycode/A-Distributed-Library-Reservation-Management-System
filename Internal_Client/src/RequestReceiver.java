@@ -118,7 +118,6 @@ public class RequestReceiver implements Runnable {
 	 * @param request - The request object that represents the call
 	 */
 	private void sendResponse ( Object result, ClientCall request ) {
-		
 		try {
 			// Serialize the response object
 			ByteArrayOutputStream bs = new ByteArrayOutputStream () ;

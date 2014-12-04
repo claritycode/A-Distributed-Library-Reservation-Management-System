@@ -52,7 +52,6 @@ public class RequestDispatcher {
 			Properties p = System.getProperties() ;
 			// Initialize ORB
 			orb = ORB.init( args, p ) ;
-			
 			try {
 				// Get a Reference to Name Service
 				// It will be used to get the CORBA Object

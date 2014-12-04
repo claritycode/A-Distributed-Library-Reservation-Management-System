@@ -119,7 +119,6 @@ public class FrontEnd extends LibraryInterfacePOA {
 	 * @return - The boolean value that indicates the majority of the result
 	 */
 	private boolean getMajority ( ArrayList<BooleanResponse> response ) {
-		
 		// If all the concerned libraries have not responded then there is a process crash. Hence, the obtained results are assumed to be 
 		// correct. Hence, we can pass the result without calculating the majority.
 		if ( response.size() != replicaManagerDatabase.size() ) {
@@ -255,7 +254,7 @@ public class FrontEnd extends LibraryInterfacePOA {
 		ArrayList<BooleanResponse> result = new ArrayList<BooleanResponse> () ;
 		
 		// Set the time out. FrontEnd will wait for responses form libraries until this much time.
-		socket.setSoTimeout(30);
+		socket.setSoTimeout(30000);
 		try {
 			while ( true ) {
 				byte[] receiveBuffer = new byte[512] ;
