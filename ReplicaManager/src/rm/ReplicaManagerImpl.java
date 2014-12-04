@@ -4,12 +4,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.UserException;
 import org.omg.PortableServer.POA;
 
 import rm.constants.UdpEnum;
+import rm.udp.RMUDPClient;
 import rm.udp.RMUDPServer;
 import DRMSServices.LibraryInterface;
 
@@ -102,14 +104,28 @@ public class ReplicaManagerImpl implements ReplicaManager {
 		
 		String key = rmIdTarget + "_" + libraryName;
 		if (isAlive) {
+			// if node is alive, remove from crashed nodes map
 			if (crashedNodes.containsKey(key)) {
 				crashedNodes.remove(key);
 			}
 		} else {
+			// if it just found a node is dead, put it in crashed nodes map and notify other RMs
 			if (!crashedNodes.containsKey(key)) {
 				CrashedNode node = new CrashedNode(libraryName, rmIdTarget, this.rmId, System.currentTimeMillis());
 				crashedNodes.put(key, node);
-				// FIXME - notify others
+				// notify others
+				dispatchCrashedNotification(libraryName, rmIdTarget);
+			}
+		}
+	}
+	
+	private void dispatchCrashedNotification(final String libraryName, final String rmIdTarget) {
+		// source: class pdf about Election and Mutual Exclusion Consensus
+		for (Entry<String, Integer> entry : rmUDPPorts.entrySet()) {
+			if (!entry.getKey().equals(rmId)) {
+				String clientMsg = RMUDPClient.buildUdpMsg(rmId, UdpEnum.CRASH_AGREEMENT, libraryName, rmIdTarget);
+				String heartBeat = RMUDPClient.sendUdpRequest("localhost", entry.getValue(), clientMsg);
+				// FIXME - consensus algorithm
 			}
 		}
 	}
@@ -131,8 +147,10 @@ public class ReplicaManagerImpl implements ReplicaManager {
 				String methodName = msgArray[0];
 				String originalRmId = msgArray[1];
 				String[] params = Arrays.copyOfRange(msgArray, 2, msgArray.length);
-
-				if (methodName.equals(UdpEnum.HEART_BEAT.name())) {
+				if (methodName.equals(UdpEnum.FAILURE.name())) {
+					// call from Front End to handle failure don't send back any message
+					handleFailure(params[0], originalRmId);
+				} else if (methodName.equals(UdpEnum.HEART_BEAT.name())) {
 					message = Boolean.toString(processHeartBeat(params[0]));
 				} else if (methodName.equals(UdpEnum.CRASH_AGREEMENT.name())) {
 					message = Boolean.toString(processCrashAgreement(params[0], params[1], originalRmId));
