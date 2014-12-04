@@ -76,7 +76,7 @@ public class DRMSMcgill extends DRMSServices.LibraryInterfacePOA implements Runn
 			book.put(index,new ArrayList<BookDetails>());
 			
 		}
-		orbMcgill.run();
+		//orbMcgill.run();
 		//mcgillServer.exportserver1();			==================================================EXPORT SERVER
 		
 		}

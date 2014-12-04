@@ -208,7 +208,7 @@ public class _LibraryInterfaceStub extends org.omg.CORBA.portable.ObjectImpl imp
 
 
   /**
-  		 * set byzantine flag to say if replica with give wrong responses.
+  		 * Set byzantine flag to say if replica will give wrong responses.
   		 * @param byzantineFlag True if replica should generate software errors.
   		 */
   public void setByzantineFlag (boolean byzantineFlag)

@@ -78,7 +78,7 @@ public interface LibraryInterfaceOperations
   void shutDown ();
 
   /**
-  		 * set byzantine flag to say if replica with give wrong responses.
+  		 * Set byzantine flag to say if replica will give wrong responses.
   		 * @param byzantineFlag True if replica should generate software errors.
   		 */
   void setByzantineFlag (boolean byzantineFlag);

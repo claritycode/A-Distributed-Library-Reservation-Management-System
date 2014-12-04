@@ -21,7 +21,7 @@ public class HeartBeatDispatcher implements Runnable {
 		this.rmId = rm.getRmId();
 		this.libraryNames = libraryNames;
 		this.rmUDPPorts = rm.getRMUDPPorts();
-	}		
+	}
 
 	@Override
 	public void run() {
@@ -29,6 +29,7 @@ public class HeartBeatDispatcher implements Runnable {
 			while (true) {
 				Thread.sleep(SLEEP_TIME);
 
+				// for each library in each RM that is not this.rm, send heart beat
 				for (Entry<String, Integer> entry : rmUDPPorts.entrySet()) {
 					if (!entry.getKey().equals(rmId)) {
 						for (String libraryName : libraryNames) {
@@ -43,9 +44,16 @@ public class HeartBeatDispatcher implements Runnable {
 
 	}
 	
-	private void dispatchHeartBeat(String libraryName, int port, String rmIdTarget) {
+	/**
+	 * Send heart beat to check if library in another replica manager is alive. The response will be handled by this.rm.
+	 * @param libraryName
+	 * @param port
+	 * @param rmIdTarget
+	 */
+	public void dispatchHeartBeat(String libraryName, int port, String rmIdTarget) {
 		String clientMsg = RMUDPClient.buildUdpMsg(rmId, UdpEnum.HEART_BEAT, libraryName);
-		String heartBeat = RMUDPClient.sendUdpRequest("localhost", port, clientMsg);
+		System.out.println(rmId + " sending [" + clientMsg + "] to [" + RMUDPClient.DEFAULT_HOST + ":" + port);
+		String heartBeat = RMUDPClient.sendUdpRequest(RMUDPClient.DEFAULT_HOST, port, clientMsg);
 		
 		rm.handleHeartBeatResponse(libraryName, rmIdTarget, heartBeat);
 	}
