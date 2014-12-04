@@ -162,6 +162,7 @@ public class RequestDispatcher {
 	 * */
 	public LibraryInterface getRemoteObject ( String educationalInstitute ) {
 		
+		educationalInstitute = replicaName + "_" + educationalInstitute ;
 		NameComponent[] name = new NameComponent[1] ;
 		name[0] = new NameComponent () ;
 		name[0].id = educationalInstitute ;

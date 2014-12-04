@@ -44,6 +44,11 @@ import DRMSServices.nonReturners;
 public class FrontEnd extends LibraryInterfacePOA {
 	
 	/**
+	 * replicaManagerDatabase - Consists the address of all the replica managers i the replicated system
+	 */
+	private static HashMap< String, InetSocketAddress > replicaManagerDatabase = new HashMap <String, InetSocketAddress> ();
+	
+	/**
 	 * systemProperty - The property expected from the entire system. Valid values are "Fault Tolerance" and "High Availability"
 	 * This value is supposed to be common among all the <code>FrontEnd</code> objects created by the system.
 	 */
@@ -59,10 +64,7 @@ public class FrontEnd extends LibraryInterfacePOA {
 	 */
 	private String libraryName ;
 	
-	/**
-	 * replicaManagerDatabase - Consists the address of al the replica managers i the replicated system
-	 */
-	private HashMap< String, InetSocketAddress > replicaManagerDatabase ;
+	
 	
 	/**
 	 * @return the systemProperty
@@ -87,7 +89,6 @@ public class FrontEnd extends LibraryInterfacePOA {
 	public FrontEnd ( String newLibraryName, InetSocketAddress newSequencerAddress ) {
 		libraryName = newLibraryName ;
 		sequencerAddress = newSequencerAddress ;
-		replicaManagerDatabase = new HashMap< String, InetSocketAddress > () ;
 	}
 	
 	/**
@@ -96,7 +97,7 @@ public class FrontEnd extends LibraryInterfacePOA {
 	 * @param ipAddress - IP address of the replica manager
 	 * @param portNo - Port number of the replica manager
 	 */
-	public void addReplicaManager ( String replicaManagerName, InetAddress ipAddress, int portNo ) {
+	public static void addReplicaManager ( String replicaManagerName, InetAddress ipAddress, int portNo ) {
 		replicaManagerDatabase.put( replicaManagerName, new InetSocketAddress( ipAddress, portNo )) ;
 	}
 	

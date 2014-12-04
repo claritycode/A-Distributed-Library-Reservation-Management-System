@@ -66,11 +66,19 @@ public class FrontEndMain {
 		}
 		
 		FrontEnd[] libraries = new FrontEnd[3] ;
-		InetSocketAddress sequencerAddress = new InetSocketAddress ( 5666 ) ;
+		InetSocketAddress sequencerAddress = new InetSocketAddress ( 9988 ) ;
 		
 		libraries[0] = new FrontEnd ( "Concordia University", sequencerAddress) ;
 		libraries[1] = new FrontEnd ( "McGill University", sequencerAddress ) ;
 		libraries[2] = new FrontEnd ( "Vanier College", sequencerAddress) ;
+		
+		try {
+			FrontEnd.addReplicaManager("rm1", InetAddress.getLocalHost(), 10101);
+			FrontEnd.addReplicaManager("rm2", InetAddress.getLocalHost(), 10102);
+			FrontEnd.addReplicaManager("rm3", InetAddress.getLocalHost(), 10103);	
+		} catch ( UnknownHostException e ) {
+			System.out.println ( e.getMessage() ) ;
+		}
 		
 		NameComponent[] name = new NameComponent[1] ;
 		name[0] = new NameComponent() ;
