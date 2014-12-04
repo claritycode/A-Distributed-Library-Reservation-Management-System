@@ -14,7 +14,7 @@ target/
 *.war
 *.ear
  
- .recommenders/
+ 
 ######################
 # Windows
 ######################
@@ -58,8 +58,8 @@ tmp/**/*
 /src/main/resources/rebel.xml
 # External tool builders
 .externalToolBuilders/
- 
-# Locally stored "Eclipse launch configurations"
+ .recommenders/
+ # Locally stored "Eclipse launch configurations"
 *.launch
  
 # CDT-specific
