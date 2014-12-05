@@ -1,9 +1,9 @@
-concordia server created at Thu Dec 04 18:59:10 EST 2014
+concordia server created at Thu Dec 04 19:10:15 EST 2014
 
-A new student with username username_c1 was created at Thu Dec 04 18:59:10 EST 2014
-A new student with username username_c2 was created at Thu Dec 04 18:59:10 EST 2014
-A new student with username username_c3 was created at Thu Dec 04 18:59:10 EST 2014
-1 Copies of Book named book1 added to collection at Thu Dec 04 18:59:10 EST 2014 by concordia
-5 Copies of Book named book2 added to collection at Thu Dec 04 18:59:10 EST 2014 by concordia
-5 Copies of Book named book3 added to collection at Thu Dec 04 18:59:10 EST 2014 by concordia
-8 Copies of Book named book4 added to collection at Thu Dec 04 18:59:10 EST 2014 by concordia
+A new student with username username_c1 was created at Thu Dec 04 19:10:15 EST 2014
+A new student with username username_c2 was created at Thu Dec 04 19:10:15 EST 2014
+A new student with username username_c3 was created at Thu Dec 04 19:10:15 EST 2014
+1 Copies of Book named book1 added to collection at Thu Dec 04 19:10:15 EST 2014 by concordia
+5 Copies of Book named book2 added to collection at Thu Dec 04 19:10:15 EST 2014 by concordia
+5 Copies of Book named book3 added to collection at Thu Dec 04 19:10:15 EST 2014 by concordia
+8 Copies of Book named book4 added to collection at Thu Dec 04 19:10:15 EST 2014 by concordia

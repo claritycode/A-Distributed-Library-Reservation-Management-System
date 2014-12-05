@@ -1,9 +1,9 @@
-mcgill server created at Thu Dec 04 18:59:10 EST 2014
+mcgill server created at Thu Dec 04 19:10:16 EST 2014
 
-A new student with username username_m1 was created at Thu Dec 04 18:59:10 EST 2014
-A new student with username username_m2 was created at Thu Dec 04 18:59:10 EST 2014
-A new student with username username_m3 was created at Thu Dec 04 18:59:10 EST 2014
-5 Copies of Book named book1 added to collection at Thu Dec 04 18:59:10 EST 2014 by mcgill
-1 Copies of Book named book2 added to collection at Thu Dec 04 18:59:10 EST 2014 by mcgill
-3 Copies of Book named book5 added to collection at Thu Dec 04 18:59:10 EST 2014 by mcgill
-3 Copies of Book named book6 added to collection at Thu Dec 04 18:59:10 EST 2014 by mcgill
+A new student with username username_m1 was created at Thu Dec 04 19:10:16 EST 2014
+A new student with username username_m2 was created at Thu Dec 04 19:10:16 EST 2014
+A new student with username username_m3 was created at Thu Dec 04 19:10:16 EST 2014
+5 Copies of Book named book1 added to collection at Thu Dec 04 19:10:16 EST 2014 by mcgill
+1 Copies of Book named book2 added to collection at Thu Dec 04 19:10:16 EST 2014 by mcgill
+3 Copies of Book named book5 added to collection at Thu Dec 04 19:10:16 EST 2014 by mcgill
+3 Copies of Book named book6 added to collection at Thu Dec 04 19:10:16 EST 2014 by mcgill

@@ -121,9 +121,12 @@ public class FrontEnd extends LibraryInterfacePOA {
 	private boolean getMajority ( ArrayList<BooleanResponse> response ) {
 		// If all the concerned libraries have not responded then there is a process crash. Hence, the obtained results are assumed to be 
 		// correct. Hence, we can pass the result without calculating the majority.
-		if ( response.size() != replicaManagerDatabase.size() ) {
+		System.out.println ( "Response size" + response.size() ) ;
+		if ( response.size() != replicaManagerDatabase.size()  && response.size() != 0 ) {
+			
 			return response.get(0).getResult() ;
-		}
+			
+		} 
 		
 		boolean majorityResult = false ;		// The majority result caulcuated so far
 								

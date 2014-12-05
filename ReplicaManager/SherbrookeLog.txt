@@ -1,3 +1,57 @@
 add book by adminbook2 author2 at Thu Dec 04 18:30:10 EST 2014
 add book by adminbook2 author2 at Thu Dec 04 18:55:08 EST 2014
 add book by adminbook2 author2 at Thu Dec 04 18:59:58 EST 2014
+add book by adminbook2 author2 at Thu Dec 04 19:14:13 EST 2014
+add book by adminbook3 author3 at Thu Dec 04 19:14:13 EST 2014
+add book by adminbook4 author4 at Thu Dec 04 19:14:13 EST 2014
+add book by adminbook5 author4 at Thu Dec 04 19:14:13 EST 2014
+add book by adminbook6 author4 at Thu Dec 04 19:14:13 EST 2014
+add book by adminbook7 author4 at Thu Dec 04 19:14:13 EST 2014
+Account credated For :username_s1 sherbrooke phone0 at Thu Dec 04 19:14:13 EST 2014
+create accountusername_s1 sherbrooke phone1username already exits at Thu Dec 04 19:14:13 EST 2014
+create accountusername_s1 sherbrooke phone2username already exits at Thu Dec 04 19:14:13 EST 2014
+add book by adminbook2 author2 at Thu Dec 04 19:14:44 EST 2014
+add book by adminbook3 author3 at Thu Dec 04 19:14:44 EST 2014
+add book by adminbook4 author4 at Thu Dec 04 19:14:44 EST 2014
+add book by adminbook5 author4 at Thu Dec 04 19:14:44 EST 2014
+add book by adminbook6 author4 at Thu Dec 04 19:14:44 EST 2014
+add book by adminbook7 author4 at Thu Dec 04 19:14:44 EST 2014
+Account credated For :username_s1 sherbrooke phone0 at Thu Dec 04 19:14:44 EST 2014
+create accountusername_s1 sherbrooke phone1username already exits at Thu Dec 04 19:14:44 EST 2014
+create accountusername_s1 sherbrooke phone2username already exits at Thu Dec 04 19:14:44 EST 2014
+add book by adminbook2 author2 at Thu Dec 04 19:39:47 EST 2014
+add book by adminbook3 author3 at Thu Dec 04 19:39:47 EST 2014
+add book by adminbook4 author4 at Thu Dec 04 19:39:47 EST 2014
+add book by adminbook5 author4 at Thu Dec 04 19:39:47 EST 2014
+add book by adminbook6 author4 at Thu Dec 04 19:39:47 EST 2014
+add book by adminbook7 author4 at Thu Dec 04 19:39:47 EST 2014
+Account credated For :username_s1 sherbrooke phone0 at Thu Dec 04 19:39:47 EST 2014
+create accountusername_s1 sherbrooke phone1username already exits at Thu Dec 04 19:39:47 EST 2014
+create accountusername_s1 sherbrooke phone2username already exits at Thu Dec 04 19:39:47 EST 2014
+add book by adminbook2 author2 at Thu Dec 04 19:47:57 EST 2014
+add book by adminbook3 author3 at Thu Dec 04 19:47:57 EST 2014
+add book by adminbook4 author4 at Thu Dec 04 19:47:57 EST 2014
+add book by adminbook5 author4 at Thu Dec 04 19:47:57 EST 2014
+add book by adminbook6 author4 at Thu Dec 04 19:47:57 EST 2014
+add book by adminbook7 author4 at Thu Dec 04 19:47:57 EST 2014
+Account credated For :username_s1 sherbrooke phone0 at Thu Dec 04 19:47:57 EST 2014
+create accountusername_s1 sherbrooke phone1username already exits at Thu Dec 04 19:47:57 EST 2014
+create accountusername_s1 sherbrooke phone2username already exits at Thu Dec 04 19:47:57 EST 2014
+add book by adminbook2 author2 at Thu Dec 04 19:51:00 EST 2014
+add book by adminbook3 author3 at Thu Dec 04 19:51:00 EST 2014
+add book by adminbook4 author4 at Thu Dec 04 19:51:00 EST 2014
+add book by adminbook5 author4 at Thu Dec 04 19:51:00 EST 2014
+add book by adminbook6 author4 at Thu Dec 04 19:51:00 EST 2014
+add book by adminbook7 author4 at Thu Dec 04 19:51:00 EST 2014
+Account credated For :username_s1 sherbrooke phone0 at Thu Dec 04 19:51:00 EST 2014
+create accountusername_s1 sherbrooke phone1username already exits at Thu Dec 04 19:51:00 EST 2014
+create accountusername_s1 sherbrooke phone2username already exits at Thu Dec 04 19:51:00 EST 2014
+add book by adminbook2 author2 at Thu Dec 04 19:54:15 EST 2014
+add book by adminbook3 author3 at Thu Dec 04 19:54:15 EST 2014
+add book by adminbook4 author4 at Thu Dec 04 19:54:15 EST 2014
+add book by adminbook5 author4 at Thu Dec 04 19:54:15 EST 2014
+add book by adminbook6 author4 at Thu Dec 04 19:54:15 EST 2014
+add book by adminbook7 author4 at Thu Dec 04 19:54:15 EST 2014
+Account credated For :username_s1 sherbrooke phone0 at Thu Dec 04 19:54:15 EST 2014
+create accountusername_s1 sherbrooke phone1username already exits at Thu Dec 04 19:54:15 EST 2014
+create accountusername_s1 sherbrooke phone2username already exits at Thu Dec 04 19:54:15 EST 2014

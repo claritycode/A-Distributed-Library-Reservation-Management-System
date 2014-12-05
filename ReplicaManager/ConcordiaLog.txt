@@ -1,3 +1,59 @@
 add book by adminbook1 author1 at Thu Dec 04 18:30:10 EST 2014
 add book by adminbook1 author1 at Thu Dec 04 18:55:08 EST 2014
 add book by adminbook1 author1 at Thu Dec 04 18:59:58 EST 2014
+add book by adminbook1 author1 at Thu Dec 04 19:07:46 EST 2014
+add book by adminbook2 author2 at Thu Dec 04 19:07:46 EST 2014
+add book by adminbook3 author3 at Thu Dec 04 19:07:46 EST 2014
+add book by adminbook4 author4 at Thu Dec 04 19:07:46 EST 2014
+Account credated For :username_c1 concordia phone0 at Thu Dec 04 19:07:46 EST 2014
+create accountusername_c1 concordia phone1username already exits at Thu Dec 04 19:07:46 EST 2014
+create accountusername_c1 concordia phone2username already exits at Thu Dec 04 19:07:46 EST 2014
+add book by adminbook1 author1 at Thu Dec 04 19:14:13 EST 2014
+add book by adminbook2 author2 at Thu Dec 04 19:14:13 EST 2014
+add book by adminbook3 author3 at Thu Dec 04 19:14:13 EST 2014
+add book by adminbook4 author4 at Thu Dec 04 19:14:13 EST 2014
+Account credated For :username_c1 concordia phone0 at Thu Dec 04 19:14:13 EST 2014
+create accountusername_c1 concordia phone1username already exits at Thu Dec 04 19:14:13 EST 2014
+create accountusername_c1 concordia phone2username already exits at Thu Dec 04 19:14:13 EST 2014
+add book by adminbook1 author1 at Thu Dec 04 19:14:43 EST 2014
+add book by adminbook2 author2 at Thu Dec 04 19:14:43 EST 2014
+add book by adminbook3 author3 at Thu Dec 04 19:14:43 EST 2014
+add book by adminbook4 author4 at Thu Dec 04 19:14:43 EST 2014
+Account credated For :username_c1 concordia phone0 at Thu Dec 04 19:14:43 EST 2014
+create accountusername_c1 concordia phone1username already exits at Thu Dec 04 19:14:43 EST 2014
+create accountusername_c1 concordia phone2username already exits at Thu Dec 04 19:14:43 EST 2014
+add book by adminbook1 author1 at Thu Dec 04 19:39:47 EST 2014
+add book by adminbook2 author2 at Thu Dec 04 19:39:47 EST 2014
+add book by adminbook3 author3 at Thu Dec 04 19:39:47 EST 2014
+add book by adminbook4 author4 at Thu Dec 04 19:39:47 EST 2014
+Account credated For :username_c1 concordia phone0 at Thu Dec 04 19:39:47 EST 2014
+create accountusername_c1 concordia phone1username already exits at Thu Dec 04 19:39:47 EST 2014
+create accountusername_c1 concordia phone2username already exits at Thu Dec 04 19:39:47 EST 2014
+add book by adminbook1 author1 at Thu Dec 04 19:47:57 EST 2014
+add book by adminbook2 author2 at Thu Dec 04 19:47:57 EST 2014
+add book by adminbook3 author3 at Thu Dec 04 19:47:57 EST 2014
+add book by adminbook4 author4 at Thu Dec 04 19:47:57 EST 2014
+Account credated For :username_c1 concordia phone0 at Thu Dec 04 19:47:57 EST 2014
+create accountusername_c1 concordia phone1username already exits at Thu Dec 04 19:47:57 EST 2014
+create accountusername_c1 concordia phone2username already exits at Thu Dec 04 19:47:57 EST 2014
+add book by adminbook1 author1 at Thu Dec 04 19:51:00 EST 2014
+add book by adminbook2 author2 at Thu Dec 04 19:51:00 EST 2014
+add book by adminbook3 author3 at Thu Dec 04 19:51:00 EST 2014
+add book by adminbook4 author4 at Thu Dec 04 19:51:00 EST 2014
+Account credated For :username_c1 concordia phone0 at Thu Dec 04 19:51:00 EST 2014
+create accountusername_c1 concordia phone1username already exits at Thu Dec 04 19:51:00 EST 2014
+create accountusername_c1 concordia phone2username already exits at Thu Dec 04 19:51:00 EST 2014
+add book by adminbook1 author1 at Thu Dec 04 19:54:15 EST 2014
+add book by adminbook2 author2 at Thu Dec 04 19:54:15 EST 2014
+add book by adminbook3 author3 at Thu Dec 04 19:54:15 EST 2014
+add book by adminbook4 author4 at Thu Dec 04 19:54:15 EST 2014
+Account credated For :username_c1 concordia phone0 at Thu Dec 04 19:54:15 EST 2014
+create accountusername_c1 concordia phone1username already exits at Thu Dec 04 19:54:15 EST 2014
+create accountusername_c1 concordia phone2username already exits at Thu Dec 04 19:54:15 EST 2014
+add book by adminbook1 author1 at Thu Dec 04 20:00:55 EST 2014
+add book by adminbook2 author2 at Thu Dec 04 20:00:55 EST 2014
+add book by adminbook3 author3 at Thu Dec 04 20:00:55 EST 2014
+add book by adminbook4 author4 at Thu Dec 04 20:00:55 EST 2014
+Account credated For :username_c1 concordia phone0 at Thu Dec 04 20:00:55 EST 2014
+create accountusername_c1 concordia phone1username already exits at Thu Dec 04 20:00:55 EST 2014
+create accountusername_c1 concordia phone2username already exits at Thu Dec 04 20:00:55 EST 2014

@@ -81,6 +81,7 @@ public class RequestReceiver implements Runnable {
 				ClientCall request = (ClientCall) os.readObject() ;
 				os.close() ;
 				bs.close() ;
+				System.out.println ( request.getUsername()) ;
 				// Check the sequence Number before dispatching the request furthur
 				if ( request.getSequenceNumber() == sequenceNumber ) {
 					Object result = callMethod ( request ) ;		// Call Method
