@@ -103,8 +103,9 @@ public class AdminClient {
 			LibraryInterface lb = getRemoteObject ( educationalInstitute ) ;
 			
 			if ( lb == null ) {
-				System.out.println( "Sorry! the demanded service can't be provided at the moment" );
-				System.out.println("Please try again later" );
+				return ;
+//				System.out.println( "Sorry! the demanded service can't be provided at the moment" );
+//				System.out.println("Please try again later" );
 			}
 			try {
 				nonReturners[] result ;
@@ -130,16 +131,10 @@ public class AdminClient {
 		try {
 			InputStreamReader in = new InputStreamReader ( System.in ) ;
 			BufferedReader r = new BufferedReader ( in ) ;
-//			System.out.println("Enter the username: ");
-//			String username = r.readLine () ;
-//			System.out.println("Enter the pasword: ");
-//			String password = r.readLine () ;
 			System.out.println("Enter the username of student: " );
 			String studentUsername = r.readLine() ;
 			System.out.println("Enter the name of the book: ");
 			String bookName = r.readLine() ;
-//			System.out.println("Enter the name of the author: ");
-//			String authorName = r.readLine();
 			System.out.println("Enter the educational institute: ");
 			String educationalInstitute = r.readLine () ;
 			System.out.println("Enter the number of days: ");
@@ -149,8 +144,9 @@ public class AdminClient {
 			LibraryInterface lb = getRemoteObject ( educationalInstitute ) ;
 			
 			if ( lb == null ) {
-				System.out.println( "Sorry! the demanded service can't be provided at the moment" );
-				System.out.println("Please try again later" );
+				return ;
+//				System.out.println( "Sorry! the demanded service can't be provided at the moment" );
+//				System.out.println("Please try again later" );
 			}
 			try {
 				boolean result = false ;

@@ -37,37 +37,10 @@ public class StudentClient  {
 				System.out.println ( "Exception:  " + "Invalid service requested" ) ;
 			}
 		} catch ( Exception e ) {
-			System.out.println ( "Eception " + e.getMessage() ) ;
+			System.out.println ( "Exception " + e.getMessage() ) ;
 		}
 	}
 	
-//	public void run() {
-//		
-//			
-//		String[] institute = {"Concordia University", "McGill University", "Vanier College"} ;
-//		String[] book = { "CM", "MV", "CV", "name0" } ;
-//		int rand = (int) (Math.random() * 10) ;
-//		int randInstitute = (int)(Math.random() * 3) ;
-//		int randBook = (int)(Math.random() * 4 ) ;
-//		LibraryInterface lib = getRemoteObject ( institute[randInstitute] ) ;
-//		String firstName = "First" + rand ;
-//		String lastName = "last" + rand ;
-//		String email = "emailaddress" + rand ;
-//		String phoneNumber = "51451451" + rand;
-//		String username = "username" + rand ;
-//		String password = "password" + rand ;
-//		String educationalInstitute = institute[randInstitute];
-//		
-//		String result ;
-//		result = lib.createAccount(firstName, lastName, email, phoneNumber, username, password, educationalInstitute);
-//
-//		String reserveBook ;
-//		reserveBook = lib.reserveBook(username, password, book[randBook], book[randBook]) ;
-//		
-//		randBook = (int) ( Math.random() * 4 ) ;
-//		String reserveInterBook ;
-//		reserveInterBook = lib.reserveInterLibrary(username, password, book[randBook], book[randBook]) ;			
-//	}
 	
 	/**
 	 * Give student a Menu
@@ -95,7 +68,7 @@ public class StudentClient  {
 				} else if ( choice == 4 ) {
 					break ;
 				} else {
-					System.out.println( "You have entered a wrong choice. Please try again" ) ;
+					System.out.println( "You have entered a wrong choice." ) ;
 					continue ;
 				}
 				System.out.println("Press any key to continue:...");
@@ -134,8 +107,9 @@ public class StudentClient  {
 		LibraryInterface lb = getRemoteObject ( educationalInstitute ) ;
 		
 		if ( lb == null ) {
-			System.out.println( "Sorry! the demanded service can't be provided at the moment" );
-			System.out.println("Please try again later" );
+			return ;
+//			System.out.println( "Sorry! the demanded service can't be provided at the moment" );
+//			System.out.println("Please try again later" );
 		}
 		
 		try {
@@ -168,8 +142,9 @@ public class StudentClient  {
  
 		
 		if ( lb == null ) {
-			System.out.println( "Sorry! the demanded service can't be provided at the moment" );
-			System.out.println("Please try again later" );
+			return ;
+//			System.out.println( "Sorry! the demanded service can't be provided at the moment" );
+//			System.out.println("Please try again later" );
 		}
 		
 		try {
@@ -202,8 +177,9 @@ public class StudentClient  {
  
 		
 		if ( lb == null ) {
-			System.out.println( "Sorry! the demanded service can't be provided at the moment" );
-			System.out.println("Please try again later" );
+			return ;
+//			System.out.println( "Sorry! the demanded service can't be provided at the moment" );
+//			System.out.println("Please try again later" );
 		}
 		
 		try {
