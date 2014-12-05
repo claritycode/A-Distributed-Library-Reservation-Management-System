@@ -1,13 +1,27 @@
+package parth;
 
-import java.util.HashMap;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Map ;
-import java.io.*;
-import java.net.*;
-import java.util.Calendar ;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import util.NonReturnersParser;
-import DRMSServices.* ;
+import DRMSServices.LibraryInterfacePOA;
+import DRMSServices.lateStudent;
+import DRMSServices.nonReturners;
 /**
  *@author Parth Patel
  * A <code>Library</code> represents the library of a University.
@@ -687,49 +701,31 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 	
 	
 	private void initializeStudents () {
-	
-		FileReader file = null ;
-		try {
-			file = new FileReader ( "../../IdlFiles/resources/students" + "_" + name + ".csv" ) ;			
-		} catch ( FileNotFoundException e ) {
-			System.out.println ( "Could Not find the file to load initial students" ) ;
-			System.out.println ( e.getMessage () ) ;
-			return ;
-		}
-		BufferedReader br = new BufferedReader ( file ) ;
-		String line = null ;
-		try {
-			while ( ( line = br.readLine() ) != null ) {
-				String[] data = line.split(",") ;
-				if ( data.length != 7 ) {
-					System.out.println ( "The file for initialzing students is invalid" ) ;
-					if ( file != null ) {
-						try {
-							br.close () ;
-							file.close () ;
-						} catch ( IOException e ) {
-							System.out.println ( "An Io Exception happened while trying to close the stream during initializing students" ) ;
-							System.out.println ( e.getMessage () ) ;
-							return ;
-						}
+		InputStream input = null ;
+		input = this.getClass().getResourceAsStream("../students" + "_" + name + ".csv");
+		// file = new FileReader ( "../../IdlFiles/resources/students" + "_" + name + ".csv" ) ;			
+		
+		if (input != null) {
+			BufferedReader br = new BufferedReader(new InputStreamReader(input));
+			String line = null ;
+			try {
+				while ( ( line = br.readLine() ) != null ) {
+					String[] data = line.split(",") ;
+					if ( data.length != 7 ) {
+						System.out.println ( "The file for initialzing students is invalid" ) ;
+						return ;
 					}
-					return ;
+					createAccount ( data[0], data[1], data[2], data[3], data[4], data[5], data[6] ) ;
 				}
-				createAccount ( data[0], data[1], data[2], data[3], data[4], data[5], data[6] ) ;
-			}
-		} catch ( IOException e ) {
-			System.out.println ( "IO Exception happened while initalizing some students" ) ;
-			System.out.println ( e.getMessage () ) ;
-			return ;
-		} finally {
-			if ( file != null ) {
+			} catch ( IOException e ) {
+				System.out.println ( "IO Exception happened while initalizing some students" ) ;
+				System.out.println ( e.getMessage () ) ;
+				return ;
+			} finally {
 				try {
-					br.close () ;
-					file.close () ;
-				} catch ( IOException e ) {
-					System.out.println ( "An Io Exception happened while trying to close the stream during initializing students" ) ;
-					System.out.println ( e.getMessage () ) ;
-					return ;
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 		}
@@ -737,48 +733,30 @@ public class Library extends LibraryInterfacePOA implements Runnable{
 	
 
 	private void initializeBooks () {
-		FileReader file = null ;
-		try {
-			file = new FileReader ( "../../IdlFiles/resources/books" + "_" + name + ".csv") ;			
-		} catch ( FileNotFoundException e ) {
-			System.out.println ( "Could Not find teh file to load initial books" ) ;
-			System.out.println ( e.getMessage () ) ;
-			return ;
-		}
-		BufferedReader br = new BufferedReader ( file ) ;
-		String line = null ;
-		try {
-			while ( ( line = br.readLine() ) != null ) {
-				String[] data = line.split(",") ;
-				if ( data.length != 3 ) {
-					System.out.println ( "The file for initialzing books is invalid" ) ;
-					if ( file != null ) {
-						try {
-							br.close () ;
-							file.close () ;
-						} catch ( IOException e ) {
-							System.out.println ( "An Io Exception happened while trying to close the stream during initializing books" ) ;
-							System.out.println ( e.getMessage () ) ;
-							return ;
-						}
+		InputStream input = null ;
+		input = this.getClass().getResourceAsStream("../books" + "_" + name + ".csv");
+		
+		if (input != null) {
+			BufferedReader br = new BufferedReader(new InputStreamReader(input));
+			String line = null ;
+			try {
+				while ( ( line = br.readLine() ) != null ) {
+					String[] data = line.split(",") ;
+					if ( data.length != 3 ) {
+						System.out.println ( "The file for initialzing books is invalid" ) ;
+						return ;
 					}
-					return ;
+					addBook( data[0], data[1], Integer.parseInt(data[2]) ) ;
 				}
-				addBook( data[0], data[1], Integer.parseInt(data[2]) ) ;
-			}
-		} catch ( IOException e ) {
-			System.out.println ( "IO Exception happened while initalizing some books" ) ;
-			System.out.println ( e.getMessage () ) ;
-			return ;
-		} finally {
-			if ( file != null ) {
+			} catch ( IOException e ) {
+				System.out.println ( "IO Exception happened while initalizing some books" ) ;
+				System.out.println ( e.getMessage () ) ;
+				return ;
+			} finally {
 				try {
-					br.close () ;
-					file.close () ;
-				} catch ( IOException e ) {
-					System.out.println ( "An Io Exception happened while trying to close the stream during initializing books" ) ;
-					System.out.println ( e.getMessage () ) ;
-					return ;
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 		}

@@ -70,6 +70,7 @@ public class DRMSSherbrooke extends DRMSServices.LibraryInterfacePOA implements 
 			book.put(index,new ArrayList<BookDetails>());// initialize the hash map of the book with the key that contains the first alphabet of thier names
 			
 		}
+		
 		//orbSherbrooke.run();
 		
 		//sherbrookeServer.exportserver1();
@@ -94,7 +95,16 @@ public class DRMSSherbrooke extends DRMSServices.LibraryInterfacePOA implements 
 		{
 			try
 			{
-				this.addBook("book2", "author2",4);
+				this.addBook("book2","author2",1);
+				this.addBook("book3","author3",1);
+				this.addBook("book4","author4",1);
+				this.addBook("book5","author4",1);
+				this.addBook("book6","author4",1);
+				this.addBook("book7","author4",2);
+				this.createAccount("name_s0","lastName0","email_s0","phone0","username_s1","password1","sherbrooke");
+				this.createAccount("name_s1","lastName1","email_s1","phone1","username_s1","password2","sherbrooke");
+				this.createAccount("name_s2","lastName2","email_s2","phone2","username_s1","password3","sherbrooke");
+				//this.addBook("book2", "author2",4);
 			_serverSocket=new DatagramSocket(7001);			// initializing the Datagram Socket for Specific Port Number of the Server
 			System.out.println("server started");
 			int i=0;

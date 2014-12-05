@@ -3,7 +3,6 @@ package rm;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -22,35 +21,36 @@ public class ReplicaManagerImpl implements ReplicaManager {
 	public static final String UDP_MSG_SPLIT = ":";
 
 	private final String rmId;
-	private final Map<String, LibraryInterface> libraries;
+	private final Map<String, LibraryDetails> libraries;
 	private final ORB orb;
 	private final POA rootpoa;
 	private final Map<String, Integer> rmUDPPorts;
 	private final Set<String> crashedNodes;
-	private final Map<String, Integer> libraryFailures;
 
-	public ReplicaManagerImpl(final String rmId, final List<String> libraryNames, final Map<String, Integer> rmUDPPorts,
+	public ReplicaManagerImpl(final String rmId, final String[] libraryNames, final String[] libraryPorts, final Map<String, Integer> rmUDPPorts,
 			final ORB orb, final POA rootpoa) throws UserException {
 		this.rmId = rmId;
 		this.orb = orb;
 		this.rootpoa = rootpoa;
-		this.libraries = new HashMap<String, LibraryInterface>();
+		this.libraries = new HashMap<String, LibraryDetails>();
 		this.rmUDPPorts = rmUDPPorts;
 		this.crashedNodes = new HashSet<String>();
-		this.libraryFailures = new HashMap<String, Integer>();
 		
-		this.startLibraries(libraryNames);
+		this.startLibraries(libraryNames, libraryPorts);
 
 		// create and start the udp server thread and heart beat thread
 		startUdpServer();
 		startHeartBeatDispatcher();
 	}
 
-	private void startLibraries(final List<String> libraryNames) throws UserException {
-		for (String libraryName : libraryNames) {
-			LibraryInterface library = ReplicaFactory.createLibrary(getLibraryCorbaName(libraryName), libraryName, rootpoa, orb);
-			this.libraries.put(libraryName, library);
-			this.libraryFailures.put(libraryName, 0);
+	private void startLibraries(final String[] libraryNames, final String[] libraryPorts) throws UserException {
+		for (int i = 0; i < libraryNames.length; i++) {
+			String libraryName = libraryNames[i];
+			int port = new Integer(libraryPorts[i]);
+			LibraryInterface corbaLibrary = ReplicaFactory.createLibrary(
+					getLibraryCorbaName(libraryName), libraryName, port, rmId, rootpoa, orb);
+			LibraryDetails detail = new LibraryDetails(libraryName, port, corbaLibrary);
+			this.libraries.put(libraryName, detail);
 		}
 	}
 
@@ -63,7 +63,7 @@ public class ReplicaManagerImpl implements ReplicaManager {
 	private void startHeartBeatDispatcher() {
 		HeartBeatDispatcher dispatcher = new HeartBeatDispatcher(this, this.libraries.keySet());
 		Thread t = new Thread(dispatcher);
-		// t.start(); FIXME - put back
+		t.start();
 	}
 
 	private String getLibraryCorbaName(final String libraryName) {
@@ -79,12 +79,12 @@ public class ReplicaManagerImpl implements ReplicaManager {
 		// If replica manager is not this one, just ignore it. That just here to comply with requirements: "If any one of the
 		// replicas produces incorrect result, the FE informs all the RMs about that replica."
 		if (rmId != null && rmId.equals(this.rmId)) {
-			int count = libraryFailures.get(educationalInstitution);
-			System.out.println("count = " + count); // TODO - remove sysout
-			libraryFailures.put(educationalInstitution, ++count);
+			LibraryDetails detail = this.libraries.get(educationalInstitution);
+			int count = detail.getFailures();
+			detail.setFailures(++count);
 			if (count == 3) {
 				replaceLibrary(educationalInstitution);
-				libraryFailures.put(educationalInstitution, 0);
+				detail.setFailures(0);
 			}
 		}
 	}
@@ -92,10 +92,11 @@ public class ReplicaManagerImpl implements ReplicaManager {
 	private void replaceLibrary(final String educationalInstitution) {
 		try {
 			String libraryCorbaName = getLibraryCorbaName(educationalInstitution);
-			LibraryInterface library = libraries.get(educationalInstitution);
-			library.shutDown();
+			LibraryDetails detail = this.libraries.get(educationalInstitution);
+			LibraryInterface corbaLibrary = detail.getCorbaLibrary();
+			corbaLibrary.shutDown();
 			ReplicaFactory.removeLibrary(libraryCorbaName, orb);
-			ReplicaFactory.createLibrary(libraryCorbaName, educationalInstitution, rootpoa, orb);
+			ReplicaFactory.createLibrary(libraryCorbaName, educationalInstitution, detail.getUdpPort(), rmId, rootpoa, orb);
 		} catch (UserException e) {
 			e.printStackTrace();
 		}

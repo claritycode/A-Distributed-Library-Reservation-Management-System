@@ -39,9 +39,9 @@ public class LibraryPOAImpl extends LibraryInterfacePOA {
 		System.setProperty("obj.log", "./library_" + name + ".log");
 
 		this.properties = loadProperties();;
-		// final int udpPort = new Integer(getLibraryProperty(PropertiesEnum.LIBRARY_UDP_PORT));
-		// FIXME - random ports
-		final int udpPort = 9000 + (int)(Math.random() * 200); // example using random ports
+		final int udpPort = new Integer(getLibraryProperty(PropertiesEnum.LIBRARY_UDP_PORT));
+		// test with random ports
+		// final int udpPort = 9000 + (int)(Math.random() * 200); // example using random ports
 		
 		final String studentsCsv = getLibraryProperty(PropertiesEnum.LIBRARY_STUDENTS_FILE);
 		final String booksCsv = getLibraryProperty(PropertiesEnum.LIBRARY_BOOKS_FILE);

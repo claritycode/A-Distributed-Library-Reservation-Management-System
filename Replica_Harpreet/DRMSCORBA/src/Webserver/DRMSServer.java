@@ -75,7 +75,7 @@ public class DRMSServer extends DRMSServices.LibraryInterfacePOA implements Runn
 		}
 		
 		//orb.run();
-		System.out.println("the ORB just RUN");
+		//System.out.println("the ORB just RUN");
 		//concordiaServer.exportserver1();
 		}
 		catch(Exception e)
@@ -93,7 +93,14 @@ public class DRMSServer extends DRMSServices.LibraryInterfacePOA implements Runn
 				
 				try
 				{
-					this.addBook("book1", "author1",4);
+					this.addBook("book1","author1",1);
+					this.addBook("book2","author2",5);
+					this.addBook("book3","author3",5);
+					this.addBook("book4","author4",8);
+					this.createAccount("name_c0","lastName0","email_c0","phone0","username_c1","password1","concordia");
+					this.createAccount("name_c1","lastName1","email_c1","phone1","username_c1","password2","concordia");
+					this.createAccount("name_c2","lastName2","email_c2","phone2","username_c1","password3","concordia");
+					//this.addBook("book1", "author1",4);
 				_serverSocket=new DatagramSocket(portNumber);
 				System.out.println("server started");
 				int i=0;

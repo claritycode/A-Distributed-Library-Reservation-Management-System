@@ -1,8 +1,10 @@
+package parth;
 
 import org.omg.CORBA.*;
 import org.omg.PortableServer.*;
 import org.omg.PortableServer.POAManagerPackage.AdapterInactive;
 import org.omg.CosNaming.*;
+
 import DRMSServices.* ;
 
 import java.util.Properties;
