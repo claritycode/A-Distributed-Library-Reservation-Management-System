@@ -37,14 +37,14 @@ public class ReplicaManagerStarter {
 				POA rootpoa = getRootPOA(orb);
 
 				final String[] libraryNames = properties.get("libraries").split(",");
-				final String[] libraryPorts = properties.get(rmId + ".udp.ports").split(",");
+				final String[] libraryPorts = properties.get(rmId + PropertiesEnum.RM_ANY_UDP_PORT.val()).split(",");
 				final Map<String, Integer> rmUDPPorts = getRMUDPPorts(properties);
 
 				final ReplicaManagerImpl impl = new ReplicaManagerImpl(rmId, libraryNames, libraryPorts, rmUDPPorts, orb, rootpoa);
 
 				// FIXME - remove test class (TempClass)
 				Thread t = new Thread(new ReplicaManagerStarter().new TempClass(impl));
-				t.start();
+				// t.start();
 
 				orb.run();
 			} else {

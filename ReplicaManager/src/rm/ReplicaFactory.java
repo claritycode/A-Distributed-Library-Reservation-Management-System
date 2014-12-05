@@ -77,7 +77,7 @@ public class ReplicaFactory {
 			break;
 		case "rm3":
 			// Parth - Library
-			new parth.Library(libraryName, udpPort);
+			library = new parth.Library(libraryName, udpPort);
 			break;
 		default: // "rm1"
 			// Gustavo - LibraryPOAImpl
