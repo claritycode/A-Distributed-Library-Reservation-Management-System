@@ -1,3 +1,4 @@
+package Lib;
 
 public class RegistryMain {
 

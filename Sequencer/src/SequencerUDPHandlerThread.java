@@ -5,7 +5,7 @@ import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-
+import Call.* ;
 
 public class SequencerUDPHandlerThread extends Thread
 {
@@ -35,7 +35,6 @@ public class SequencerUDPHandlerThread extends Thread
 			bais = new ByteArrayInputStream(request.getData());
 			ois= new ObjectInputStream(bais);
 			Object recievedObject=ois.readObject();
-			
 			 if(recievedObject instanceof  createAccountCall)
 			{
 				 //Code to perform the Deserialization on  the object  
@@ -51,6 +50,7 @@ public class SequencerUDPHandlerThread extends Thread
 				}
 				oos.writeObject(newObject);
 				array=baos.toByteArray();
+				System.out.println ( "username: " +newObject.getUsername()) ;
 				sendToReplica(array);
 			}
 			else if(recievedObject instanceof  getNonReturnersCall)
@@ -68,6 +68,7 @@ public class SequencerUDPHandlerThread extends Thread
 				}
 				oos.writeObject(newObject);
 				array=baos.toByteArray();
+				System.out.println ( "username: " +newObject.getUsername()) ;
 				sendToReplica(array);
 			}
 			else if(recievedObject instanceof  reserveBookCall)
@@ -85,6 +86,25 @@ public class SequencerUDPHandlerThread extends Thread
 				}
 				oos.writeObject(newObject);
 				array=baos.toByteArray();
+				System.out.println ( "username: " +newObject.getUsername()) ;
+				sendToReplica(array);
+			}
+			else if(recievedObject instanceof  reserveInterLibraryCall)
+			{
+				//Code to perform the Deserialization on  the object  
+				
+				//input the fields such as the sequence number
+				
+				//serialize the object again
+				
+				ClientCall newObject=(reserveInterLibraryCall) recievedObject;
+				synchronized(object._sequenceNumber)
+				{
+				newObject.setSequenceNumber(++object._sequenceNumber);
+				}
+				oos.writeObject(newObject);
+				array=baos.toByteArray();
+				System.out.println ( "username: " +newObject.getUsername()) ;
 				sendToReplica(array);
 			}
 			else if(recievedObject instanceof  setDurationCall)
@@ -102,6 +122,7 @@ public class SequencerUDPHandlerThread extends Thread
 				}
 				oos.writeObject(newObject);
 				array=baos.toByteArray();
+				System.out.println ( "username: " +newObject.getUsername()) ;
 				sendToReplica(array);
 			}
 			else if(recievedObject instanceof  ClientCall)
@@ -121,6 +142,7 @@ public class SequencerUDPHandlerThread extends Thread
 				}
 				oos.writeObject(newObject);
 				array=baos.toByteArray();
+				System.out.println ( "username: " +newObject.getUsername()) ;
 				sendToReplica(array);
 				}
 			else if(recievedObject instanceof  ToSequencerPortNumber)
@@ -181,7 +203,7 @@ public class SequencerUDPHandlerThread extends Thread
 		socket.send(packet1);
 		socket.send(packet2);
 		socket.send(packet3);
-		
+		System.out.println ( "Sended : " + object._sequenceNumber) ;
 		}
 		catch(Exception e)
 		{
@@ -191,5 +213,4 @@ public class SequencerUDPHandlerThread extends Thread
 	}
 }
 	
-
 

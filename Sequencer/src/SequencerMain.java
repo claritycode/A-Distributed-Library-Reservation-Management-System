@@ -37,7 +37,7 @@ public class SequencerMain extends Thread implements Serializable
 			_sequencerSocket = new DatagramSocket(9988);
 		
 		while(true)
-		{
+															{
 			
 				
 				System.out.println("In the while loop of the sequencer main class");

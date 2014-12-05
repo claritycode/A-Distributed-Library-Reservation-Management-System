@@ -27,7 +27,7 @@ public class RequestReceiver implements Runnable {
 	/**
 	 * Sequence Number to guarantee total ordering
 	 */
-	private int sequenceNumber = 0; 
+	private int sequenceNumber = 1; 
 	
 	/**
 	 * A socket through which requests are accepted and response sended back
@@ -81,7 +81,7 @@ public class RequestReceiver implements Runnable {
 				ClientCall request = (ClientCall) os.readObject() ;
 				os.close() ;
 				bs.close() ;
-				System.out.println ( request.getUsername()) ;
+				System.out.println ( "Request Received: " + request.getSequenceNumber() ) ;
 				// Check the sequence Number before dispatching the request furthur
 				if ( request.getSequenceNumber() == sequenceNumber ) {
 					Object result = callMethod ( request ) ;		// Call Method
@@ -128,6 +128,8 @@ public class RequestReceiver implements Runnable {
 			bs  = new ByteArrayOutputStream () ;
 			os = new ObjectOutputStream ( bs ) ;
 			os.writeObject(result);
+			System.out.println ( "Sending response: " + request.getSequenceNumber() ) ;
+			System.out.println ( "To: " + request.getFEPortNumber() ) ;
 			
 			byte[] sendBuffer = bs.toByteArray() ;
 			DatagramPacket sendPacket = new DatagramPacket ( sendBuffer, sendBuffer.length, 

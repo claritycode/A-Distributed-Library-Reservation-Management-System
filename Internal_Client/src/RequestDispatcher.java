@@ -3,6 +3,8 @@ import java.util.Properties;
 import org.omg.CORBA.ORB;
 import org.omg.CosNaming.NameComponent;
 import org.omg.CosNaming.NamingContext;
+import org.omg.CosNaming.NamingContextExt;
+import org.omg.CosNaming.NamingContextExtHelper;
 import org.omg.CosNaming.NamingContextHelper;
 
 import Call.createAccountCall;
@@ -32,7 +34,7 @@ public class RequestDispatcher {
 	/**
 	 * Reference to NameService
 	 */
-	private NamingContext directory ;	 
+	private NamingContextExt directory ;	 
 	
 	/**
 	 * Name of the replica to whose objects requests could be dispatched
@@ -56,7 +58,7 @@ public class RequestDispatcher {
 				// Get a Reference to Name Service
 				// It will be used to get the CORBA Object
 				org.omg.CORBA.Object obj = orb.resolve_initial_references( "NameService" ) ;
-				directory = NamingContextHelper.narrow( obj ) ;
+				directory = NamingContextExtHelper.narrow(obj) ;
 			} catch ( org.omg.CORBA.ORBPackage.InvalidName e ) {
 				System.out.println ( "Exception: " + e.getMessage() ) ;
 			}
@@ -130,7 +132,7 @@ public class RequestDispatcher {
 		
 		// Call the method
 		boolean result = library.setDuration(call.getUsername(), call.getPassword(), call.getDays());
-		
+		System.out.println ("Result at dispatcher :" + result) ;
 		// Return the result as a BooleanResponse object along with the name of the replica whose library performed the request
 		return new BooleanResponse ( replicaName, result ) ;
 	}
@@ -162,14 +164,14 @@ public class RequestDispatcher {
 	public LibraryInterface getRemoteObject ( String educationalInstitute ) {
 		
 		educationalInstitute = replicaName + "_" + educationalInstitute ;
-		NameComponent[] name = new NameComponent[1] ;
-		name[0] = new NameComponent () ;
-		name[0].id = educationalInstitute ;
-		name[0].kind = "library" ;
+//		NameComponent[] name = new NameComponent[1] ;
+//		name[0] = new NameComponent () ;
+//		name[0].id = educationalInstitute ;
+//		name[0].kind = "library" ;
 		LibraryInterface lib = null ;
 
 		try {
-			org.omg.CORBA.Object obj = directory.resolve(name) ;
+			org.omg.CORBA.Object obj = directory.resolve_str(educationalInstitute) ;
 			lib = LibraryInterfaceHelper.narrow(obj) ;
 		} catch ( org.omg.CosNaming.NamingContextPackage.NotFound e ) {
 			System.out.println ( "The requested binding is not present in the directory" ) ;

@@ -122,6 +122,11 @@ public class FrontEnd extends LibraryInterfacePOA {
 		// If all the concerned libraries have not responded then there is a process crash. Hence, the obtained results are assumed to be 
 		// correct. Hence, we can pass the result without calculating the majority.
 		System.out.println ( "Response size" + response.size() ) ;
+		System.out.println ( "Responses are: " ) ;
+		for ( BooleanResponse b : response ) {
+			System.out.println ( "Replica: " + b.getReplicaName() ) ;
+			System.out.println ( "Response: "+ b.getResult() ) ;
+		}
 		if ( response.size() != replicaManagerDatabase.size()  && response.size() != 0 ) {
 			
 			return response.get(0).getResult() ;
@@ -208,6 +213,7 @@ public class FrontEnd extends LibraryInterfacePOA {
 	 */
 	private boolean receiveFirstReply ( DatagramSocket socket ) throws SocketException, IOException {
 		BooleanResponse result ;
+		
 		byte[] receiveBuffer = new byte[512] ;
 		DatagramPacket receivePacket = new DatagramPacket ( receiveBuffer, receiveBuffer.length ) ;
 		// Receive response
@@ -256,7 +262,7 @@ public class FrontEnd extends LibraryInterfacePOA {
 		ArrayList<BooleanResponse> result = new ArrayList<BooleanResponse> () ;
 		
 		// Set the time out. FrontEnd will wait for responses form libraries until this much time.
-		socket.setSoTimeout(30000);
+		socket.setSoTimeout(1000);
 		try {
 			while ( true ) {
 				byte[] receiveBuffer = new byte[512] ;
@@ -293,12 +299,16 @@ public class FrontEnd extends LibraryInterfacePOA {
 		ByteArrayOutputStream bs = new ByteArrayOutputStream () ;
 		ObjectOutputStream os = new ObjectOutputStream ( bs ) ;
 		os.writeObject( call );
+		os.close() ;
+		bs.close();
+		
 		
 		// Send it to the sequencer
 		byte[] sendBuffer = bs.toByteArray() ;
 		DatagramPacket sendPacket = new DatagramPacket ( sendBuffer, sendBuffer.length, 
 				sequencerAddress.getAddress(), sequencerAddress.getPort() ) ;
 		socket.send(sendPacket);
+		System.out.println ( "Sended: " + call.getClass().getSimpleName()) ;
 	}
 	
 	/**
@@ -309,7 +319,7 @@ public class FrontEnd extends LibraryInterfacePOA {
 	private ArrayList<GetNonReturnersResponse> receiveGetNonReturnersReply ( DatagramSocket socket ) throws IOException  {
 		ArrayList<GetNonReturnersResponse> result = new ArrayList<GetNonReturnersResponse> () ;
 		// Set the time out. FrontEnd will wait for responses form libraries until this much time.
-		socket.setSoTimeout(30);
+		socket.setSoTimeout(1000);
 		try {
 			while ( true ) {
 				// Receive response
@@ -323,6 +333,8 @@ public class FrontEnd extends LibraryInterfacePOA {
 				try {
 					GetNonReturnersResponse res = ( GetNonReturnersResponse ) is.readObject() ;
 					result.add(res) ;
+					is.close() ;
+					bs.close() ;
 				} catch ( ClassNotFoundException e ) {
 					System.out.println ( e.getMessage() ) ;
 				}
@@ -377,7 +389,7 @@ public class FrontEnd extends LibraryInterfacePOA {
 		
 		// If all the concerned libraries have not responded then there is a process crash. Hence, the obtained results are assumed to be 
 		// correct. Hence, we can pass the result without calculating the majority.
-		if ( response.size() != replicaManagerDatabase.size() ) {
+		if ( response.size() != replicaManagerDatabase.size() && response.size() != 0) {
 			return response.get(0).getResult() ;
 		}
 		
@@ -419,12 +431,11 @@ public class FrontEnd extends LibraryInterfacePOA {
 		DatagramSocket socket = null ;
 		try {
 			socket = new DatagramSocket() ;
-			
+
 			// Create a call object
-			createAccountCall call = new createAccountCall ( socket.getInetAddress(), socket.getPort(), 
-				firstName, lastName, email, phoneNumber,
+			createAccountCall call = new createAccountCall ( socket.getLocalAddress(), socket.getLocalPort(),firstName, lastName, email, phoneNumber,
 				username, password, educationalInstitute ) ;
-		
+			System.out.println ( socket.getLocalPort())  ;
 			// Send the call object in serialized form to the sequencer
 			sendRequest ( call, socket ) ;			
 			
@@ -445,11 +456,7 @@ public class FrontEnd extends LibraryInterfacePOA {
 		} catch ( IOException e ) {
 			System.out.println( e.getMessage () ); 
 			return false ;
-		} finally {
-			if ( socket != null ) {
-				socket.close() ;		// Close socket
-			}
-		}
+		} 
 		
 	}
 	
@@ -462,8 +469,7 @@ public class FrontEnd extends LibraryInterfacePOA {
 		try {
 			socket = new DatagramSocket() ;
 			
-			getNonReturnersCall call = new getNonReturnersCall ( socket.getInetAddress(), socket.getPort(), 
-				username, password, libraryName, days ) ;
+			getNonReturnersCall call = new getNonReturnersCall ( socket.getLocalAddress(), socket.getLocalPort(), username, password, libraryName, days ) ;
 			
 			sendRequest ( call, socket ) ;			
 		
@@ -497,8 +503,7 @@ public class FrontEnd extends LibraryInterfacePOA {
 		try {
 			socket = new DatagramSocket() ;
 			
-			reserveBookCall call = new reserveBookCall ( socket.getInetAddress(), socket.getPort(), 
-				username, password, bookName, authorName, libraryName ) ;
+			reserveBookCall call = new reserveBookCall ( socket.getLocalAddress(), socket.getLocalPort(), username, password, bookName, authorName, libraryName ) ;
 			
 			sendRequest ( call, socket ) ;			
 		
@@ -532,8 +537,7 @@ public class FrontEnd extends LibraryInterfacePOA {
 		try {
 			socket = new DatagramSocket() ;
 			
-			reserveInterLibraryCall call = new reserveInterLibraryCall ( socket.getInetAddress(), socket.getPort(), 
-				username, password, bookName, authorName, libraryName ) ;
+			reserveInterLibraryCall call = new reserveInterLibraryCall ( socket.getLocalAddress(), socket.getLocalPort(), username, password, bookName, authorName, libraryName ) ;
 			
 			sendRequest ( call, socket ) ;			
 		
@@ -567,8 +571,7 @@ public class FrontEnd extends LibraryInterfacePOA {
 		try {
 			socket = new DatagramSocket() ;
 			
-			setDurationCall call = new setDurationCall ( socket.getInetAddress(), socket.getPort(), 
-				"admin", "admin", studentUsername, bookName, null, days, libraryName ) ;
+			setDurationCall call = new setDurationCall ( socket.getLocalAddress(), socket.getLocalPort(),"admin", "admin", studentUsername, bookName, null, days, libraryName ) ;
 			
 			sendRequest ( call, socket ) ;			
 		
