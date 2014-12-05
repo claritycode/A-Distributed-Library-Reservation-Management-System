@@ -91,15 +91,31 @@ public class ReplicaManagerImpl implements ReplicaManager {
 
 	private void replaceLibrary(final String educationalInstitution) {
 		try {
+			killLibrary(educationalInstitution);
+			
+			String libraryCorbaName = getLibraryCorbaName(educationalInstitution);
+			LibraryDetails detail = this.libraries.get(educationalInstitution);
+			ReplicaFactory.createLibrary(libraryCorbaName, educationalInstitution, detail.getUdpPort(), rmId, rootpoa, orb);
+		} catch (UserException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void killLibrary(final String educationalInstitution) {
+		try {
 			String libraryCorbaName = getLibraryCorbaName(educationalInstitution);
 			LibraryDetails detail = this.libraries.get(educationalInstitution);
 			LibraryInterface corbaLibrary = detail.getCorbaLibrary();
 			corbaLibrary.shutDown();
 			ReplicaFactory.removeLibrary(libraryCorbaName, orb);
-			ReplicaFactory.createLibrary(libraryCorbaName, educationalInstitution, detail.getUdpPort(), rmId, rootpoa, orb);
 		} catch (UserException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void setByzantineError(final String educationalInstitution) {
+		LibraryDetails detail = this.libraries.get(educationalInstitution);
+		detail.getCorbaLibrary().setByzantineFlag(true);
 	}
 
 	@Override

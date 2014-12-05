@@ -323,6 +323,7 @@ public class LibraryPOAImpl extends LibraryInterfacePOA {
 
 	@Override
 	public void setByzantineFlag(boolean byzantineFlag) {
+		System.out.println("Byzantine Flag was set to [" + byzantineFlag + "] in library [" + name + "]");
 		this.byzantineFlag = byzantineFlag;
 	}
 

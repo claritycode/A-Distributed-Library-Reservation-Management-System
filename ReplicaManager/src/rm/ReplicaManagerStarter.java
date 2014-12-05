@@ -24,29 +24,41 @@ public class ReplicaManagerStarter {
 
 	public static final String CONFIG_PATH = "./resources/rmconfig.properties";
 	public static final String ROOT_POA = "RootPOA";
+	public static final String ERROR_NONE = "none";
+	public static final String ERROR_BYZANTINE = "byzantine";
+	public static final String ERROR_CRASH = "crash";
 
 	public static void main(String[] args) {
 		try {
 			printInstructions(args);
 
-			if (args != null && args.length == 1) {
+			if (args != null && args.length == 2) {
 				String rmId = args[0];
-				Map<String, String> properties = loadProperties();
+				String errorType = args[1];
 
-				ORB orb = getORB(properties);
-				POA rootpoa = getRootPOA(orb);
+				if ((errorType.equals(ERROR_NONE)) || (errorType.equals(ERROR_BYZANTINE)) || (errorType.equals(ERROR_CRASH))) {
+					Map<String, String> properties = loadProperties();
 
-				final String[] libraryNames = properties.get("libraries").split(",");
-				final String[] libraryPorts = properties.get(rmId + PropertiesEnum.RM_ANY_UDP_PORT.val()).split(",");
-				final Map<String, Integer> rmUDPPorts = getRMUDPPorts(properties);
+					ORB orb = getORB(properties);
+					POA rootpoa = getRootPOA(orb);
 
-				final ReplicaManagerImpl impl = new ReplicaManagerImpl(rmId, libraryNames, libraryPorts, rmUDPPorts, orb, rootpoa);
+					final String[] libraryNames = properties.get("libraries").split(",");
+					final String[] libraryPorts = properties.get(rmId + PropertiesEnum.RM_ANY_UDP_PORT.val()).split(",");
+					final Map<String, Integer> rmUDPPorts = getRMUDPPorts(properties);
 
-				// FIXME - remove test class (TempClass)
-				Thread t = new Thread(new ReplicaManagerStarter().new TempClass(impl));
-				// t.start();
-
-				orb.run();
+					final ReplicaManagerImpl impl = new ReplicaManagerImpl(rmId, libraryNames, libraryPorts, rmUDPPorts, orb,
+							rootpoa);
+					if (errorType.equals(ERROR_BYZANTINE)) {
+						impl.setByzantineError(libraryNames[0]);
+					} else if (errorType.equals(ERROR_CRASH)) {
+						Thread t = new Thread(new ReplicaManagerStarter().new SimulateCrash(impl, libraryNames[0]));
+						t.start();
+					}
+					orb.run();
+				} else {
+					throw new IllegalArgumentException("Error type should be one of (" + ERROR_NONE + "|" + ERROR_BYZANTINE + "|"
+							+ ERROR_CRASH + ")");
+				}
 			} else {
 				System.err.println("Please provide args as defined in the instructions.");
 			}
@@ -60,35 +72,22 @@ public class ReplicaManagerStarter {
 		}
 	}
 
-	// FIXME - erase TempClass
-	class TempClass implements Runnable {
-		ReplicaManagerImpl impl;
+	class SimulateCrash implements Runnable {
+		final ReplicaManagerImpl impl;
+		final String libraryName;
 
-		TempClass(ReplicaManagerImpl impl) {
+		SimulateCrash(final ReplicaManagerImpl impl, final String libraryName) {
 			this.impl = impl;
+			this.libraryName = libraryName;
 		}
 
 		@Override
 		public void run() {
 			try {
-				Thread.sleep(2000);
-				System.out.println("handleFailure 1");
-				impl.handleFailure("concordia", this.impl.getRmId());
-				Thread.sleep(100);
-				System.out.println("handleFailure 2");
-				impl.handleFailure("concordia", this.impl.getRmId());
-				Thread.sleep(100);
-				System.out.println("handleFailure 3");
-				impl.handleFailure("concordia", this.impl.getRmId());
-				Thread.sleep(100);
-				System.out.println("handleFailure 4");
-				impl.handleFailure("concordia", this.impl.getRmId());
-				Thread.sleep(100);
-				System.out.println("handleFailure 5");
-				impl.handleFailure("concordia", this.impl.getRmId());
-				Thread.sleep(100);
-				System.out.println("handleFailure 6");
-				impl.handleFailure("concordia", this.impl.getRmId());
+				System.out.println("Simulate Crash: library [" + libraryName + "] will be killed in 10 seconds.");
+				Thread.sleep(10000);
+				System.out.println("\n\n!!!!!!!!!!\n!!! killing [" + libraryName + "] !!!\n!!!!!!!!!!\n\n");
+				impl.killLibrary(libraryName);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -131,7 +130,8 @@ public class ReplicaManagerStarter {
 
 		System.out.println("Instructions:");
 		System.out.println("1) from unix command line run: 'orbd -ORBInitialPort 1050&'");
-		System.out.println("2) run this class with the replica manager id as the only argument. e.g.: rm1");
+		System.out.println("2) run this class with the replica manager id and error type  (" + ERROR_NONE + "|" + ERROR_BYZANTINE
+				+ "|" + ERROR_CRASH + ") as " + "arguments. e.g.: rm1 none");
 	}
 
 	/**

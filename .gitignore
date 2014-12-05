@@ -67,3 +67,32 @@ tmp/**/*
  
 # PDT-specific
 .buildpath
+ReplicaManager/concordia_Student_Files/username_c1.txt
+
+ReplicaManager/concordia_Student_Files/username_c2.txt
+
+ReplicaManager/concordia_Student_Files/username_c3.txt
+
+ReplicaManager/ConcordiaLog.txt
+
+ReplicaManager/mcgill_Student_Files/username_m1.txt
+
+ReplicaManager/mcgill_Student_Files/username_m2.txt
+
+ReplicaManager/mcgill_Student_Files/username_m3.txt
+
+ReplicaManager/sherbrooke_Student_Files/username_s1.txt
+
+ReplicaManager/sherbrooke_Student_Files/username_s2.txt
+
+ReplicaManager/sherbrooke_Student_Files/username_s3.txt
+
+ReplicaManager/sherbrooke_log.txt
+
+ReplicaManager/McgillLog.txt
+
+ReplicaManager/concordia_log.txt
+
+ReplicaManager/mcgill_log.txt
+
+ReplicaManager/SherbrookeLog.txt
