@@ -10,18 +10,18 @@ import java.net.InetAddress;
 public class SequencerUDPHandlerThread extends Thread
 {
 	
-	SequencerMain object;
-	DatagramPacket request;
-	ByteArrayInputStream bais;
-	ObjectInputStream ois;
-	byte array[];
-	InetAddress ip;
-	ByteArrayOutputStream baos;
-	ObjectOutputStream oos;
+	SequencerMain object;// the object of the Sequencer
+	DatagramPacket request;// datagram packet to take the request from the Front End
+	ByteArrayInputStream bais;// Byte Arry input Stream to be used to perform the Deserialization on the data  
+	ObjectInputStream ois;// object input stream for creating the actual Deserialized object from the Byte arry Stream
+	byte array[];	// the arry to be used to accept the data from the Front end
+	InetAddress ip;		// IP ON WHICH THE REPLICAS ARE RUNNING 
+	ByteArrayOutputStream baos;// Byte Array output stream  to serialize the objects 
+	ObjectOutputStream oos;// Object output stream  to serialize the objects 
 	public SequencerUDPHandlerThread (SequencerMain object,DatagramPacket request)
 	{
-		this.object=object;
-		this.request=request;
+		this.object=object;// initializing the instance variables 
+		this.request=request;// intializing the datagram packet with the values of the costructor  
 		
 	}
 	@Override
@@ -35,21 +35,15 @@ public class SequencerUDPHandlerThread extends Thread
 			bais = new ByteArrayInputStream(request.getData());
 			ois= new ObjectInputStream(bais);
 			Object recievedObject=ois.readObject();
-			if(recievedObject instanceof  ClientCall)
-			{
-			ClientCall newObject=(ClientCall) recievedObject;
 			
-			synchronized(object._sequenceNumber)
+			 if(recievedObject instanceof  createAccountCall)
 			{
-			newObject.setSequenceNumber(++object._sequenceNumber);
-			
-			}
-			oos.writeObject(newObject);
-			array=baos.toByteArray();
-			sendToReplica(array);
-			}
-			else if(recievedObject instanceof  createAccountCall)
-			{
+				 //Code to perform the Deserialization on  the object  
+					
+					//input the fields such as the sequence number
+					
+					//serialize the object again
+					
 				ClientCall newObject=(createAccountCall) recievedObject;
 				synchronized(object._sequenceNumber)
 				{
@@ -61,6 +55,12 @@ public class SequencerUDPHandlerThread extends Thread
 			}
 			else if(recievedObject instanceof  getNonReturnersCall)
 			{
+				//Code to perform the Deserialization on  the object  
+				
+				//input the fields such as the sequence number
+				
+				//serialize the object again
+				
 				ClientCall newObject=(getNonReturnersCall) recievedObject;
 				synchronized(object._sequenceNumber)
 				{
@@ -72,6 +72,12 @@ public class SequencerUDPHandlerThread extends Thread
 			}
 			else if(recievedObject instanceof  reserveBookCall)
 			{
+				//Code to perform the Deserialization on  the object  
+				
+				//input the fields such as the sequence number
+				
+				//serialize the object again
+				
 				ClientCall newObject=(reserveBookCall) recievedObject;
 				synchronized(object._sequenceNumber)
 				{
@@ -83,6 +89,12 @@ public class SequencerUDPHandlerThread extends Thread
 			}
 			else if(recievedObject instanceof  setDurationCall)
 			{
+				//Code to perform the Deserialization on  the object  
+				
+				//input the fields such as the sequence number
+				
+				//serialize the object again
+				
 				ClientCall newObject=(setDurationCall) recievedObject;
 				synchronized(object._sequenceNumber)
 				{
@@ -92,6 +104,25 @@ public class SequencerUDPHandlerThread extends Thread
 				array=baos.toByteArray();
 				sendToReplica(array);
 			}
+			else if(recievedObject instanceof  ClientCall)
+				{
+				//Code to perform the Deserialization on  the object  
+				
+				//input the fields such as the sequence number
+				
+				//serialize the object again
+				
+				ClientCall newObject=(ClientCall) recievedObject;
+				
+				synchronized(object._sequenceNumber)
+				{
+				newObject.setSequenceNumber(++object._sequenceNumber);
+				
+				}
+				oos.writeObject(newObject);
+				array=baos.toByteArray();
+				sendToReplica(array);
+				}
 			else if(recievedObject instanceof  ToSequencerPortNumber)
 			{
 				ToSequencerPortNumber newObject=(ToSequencerPortNumber) recievedObject;
@@ -140,7 +171,7 @@ public class SequencerUDPHandlerThread extends Thread
 	}
 	public void sendToReplica(byte array[])
 	{
-		
+		// multicasting the request to the replicas by creating the packets and forwarding the packets to the replica
 		try
 		{
 		DatagramPacket packet1= new DatagramPacket(array,array.length,ip,object.portNumberOfReplica1);

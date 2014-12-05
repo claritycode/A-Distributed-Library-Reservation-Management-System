@@ -11,8 +11,8 @@ import java.net.SocketException;
 
 public class SequencerMain extends Thread implements Serializable
 {
-	Integer _sequenceNumber=0;
-	DatagramSocket _sequencerSocket=null;
+	Integer _sequenceNumber=0;// the Sequence No. that the sequencer is maintaing to gurantee Total Order
+	DatagramSocket _sequencerSocket=null;//Socket to accept the values fro the client i.e. the UDP packets fro the clients and the FrontENd
 	SequencerMain object;
 	DatagramPacket request;
 	ByteArrayInputStream bais;
@@ -22,9 +22,9 @@ public class SequencerMain extends Thread implements Serializable
 	ByteArrayOutputStream boas;
 	ObjectOutputStream oos;
 	
-	int portNumberOfReplica1;
-	int portNumberOfReplica2;
-	int portNumberOfReplica3;
+	int portNumberOfReplica1=5222;
+	int portNumberOfReplica2=5223;
+	int portNumberOfReplica3=5224;
 	//SequencerUDPHandlerThread []ThreadArray;
 	public void run()
 	{
@@ -42,11 +42,11 @@ public class SequencerMain extends Thread implements Serializable
 				
 				System.out.println("In the while loop of the sequencer main class");
 			
-			DatagramPacket request= new DatagramPacket(recieveRequestArray,recieveRequestArray.length);
-			_sequencerSocket.receive(request);
+			DatagramPacket request= new DatagramPacket(recieveRequestArray,recieveRequestArray.length);//creating the packet and recieving the request from the Front End
+			_sequencerSocket.receive(request);//Recieving the request
 			System.out.println("The Request recieved ");
-			/*SequencerUDPHandlerThread newThread= new SequencerUDPHandlerThread(this, request);
-			newThread.start();*/
+			SequencerUDPHandlerThread newThread= new SequencerUDPHandlerThread(this, request);//Creating tyhe Thread to Handle The Request
+			newThread.start();	//starting the new Thread
 			//ThreadArray[i]= new SequencerUDPHandlerThread(this,request);
 			//Thread newThread= new Thread(ThreadArray[i]);
 			//newThread.start();
