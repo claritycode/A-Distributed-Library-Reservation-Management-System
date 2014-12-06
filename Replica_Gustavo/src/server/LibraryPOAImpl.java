@@ -144,7 +144,7 @@ public class LibraryPOAImpl extends LibraryInterfacePOA {
 					if ((nrs != null) && (nrs.length > 0)) {
 						message = "";
 						for (nonReturners nr : nrs) {
-							message += NonReturnersParser.nonReturnersToString(nr) + "\n";
+							message += NonReturnersParser.nonReturnersToSingleLine(nr) + "\n";
 						}
 					}
 				}
@@ -280,7 +280,8 @@ public class LibraryPOAImpl extends LibraryInterfacePOA {
 			List<nonReturners> nrList = new ArrayList<>();
 
 			nonReturners nr = service.getNonRetuners(numDays);
-			NonReturnersParser.nonReturnersToSingleLine(nr);
+			nrList.add(nr);
+			// NonReturnersParser.nonReturnersToSingleLine(nr);
 
 			String host = getProperty(PropertiesEnum.UDP_INITIAL_HOST);
 
@@ -294,10 +295,12 @@ public class LibraryPOAImpl extends LibraryInterfacePOA {
 						LOGGER.debug("Calling sendUdpRequest() from client: " + name + " on " + host + ":" + port);
 						String clientMsg = buildUdpMsg(UdpEnum.GET_NON_RETURNERS, Integer.toString(numDays));
 						String nonReturnerResponse = UDPClient.sendUdpRequest(host, port, clientMsg);
-						nrList.add(NonReturnersParser.singleLineToNonReturners(nonReturnerResponse));
+						nrList.addAll(Arrays.asList(NonReturnersParser.stringToNonReturnersArray(nonReturnerResponse)));
 					}
 				}
+				
 			}
+			
 			LOGGER.info("Got non-returners for: adminUsername = " + adminUsername + "\teducationalInstitution = "
 					+ educationalInstitution + "\tnumDays = " + numDays);
 			result = nrList.toArray(new nonReturners[nrList.size()]);

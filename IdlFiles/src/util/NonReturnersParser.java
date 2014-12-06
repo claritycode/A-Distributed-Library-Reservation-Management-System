@@ -77,9 +77,24 @@ public class NonReturnersParser {
 				}
 				
 				nr.studentList = lsList.toArray(new lateStudent[lsList.size()]);
+			} else {
+				nr.studentList = new lateStudent[0];
 			}
 		}
 		return nr;
+	}
+	
+	public static nonReturners[] stringToNonReturnersArray(String lines) {
+		List<nonReturners> nrList = new ArrayList<>();
+		
+		String[] split = lines.split("\n");
+		for (String line: split) {
+			if (line != null && line.trim().length() > 0) {
+				nrList.add(singleLineToNonReturners(line));
+			}
+		}
+		
+		return nrList.toArray(new nonReturners[nrList.size()]);
 	}
 
 	public static void main(String[] args) {
@@ -99,7 +114,24 @@ public class NonReturnersParser {
 		System.out.println("student 1 = " + lsArray2[0].firstName);
 		System.out.println("student 2 = " + lsArray2[1].firstName);
 		System.out.println("student 3 = " + lsArray2[2].firstName);
-
+		
+		nonReturners nr3 = new nonReturners("univ2", new lateStudent[]{});
+		
+		System.out.println("\n\n\n>>>>>");
+		String lines = nonReturnersToSingleLine(nr) + "\n" + nonReturnersToSingleLine(nr3);
+		nonReturners[] nrs = stringToNonReturnersArray(lines);
+		for (nonReturners nx : nrs) {
+			System.out.println(nonReturnersToSingleLine(nx));
+		}
+		System.out.println("--------------------");
+		for (nonReturners nx : nrs) {
+			System.out.println(nonReturnersToString(nx));
+		}
+		System.out.println("--------------------");
+		for (nonReturners nx : nrs) {
+			int count = nx.studentList != null ? nx.studentList.length : 0;
+			System.out.println(nx.universityName + ": " + count);
+		}
 	}
 
 }

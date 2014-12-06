@@ -96,3 +96,9 @@ ReplicaManager/concordia_log.txt
 ReplicaManager/mcgill_log.txt
 
 ReplicaManager/SherbrookeLog.txt
+
+ReplicaManager/concordia_admin_log.txt
+
+ReplicaManager/mcgill_admin_log.txt
+
+ReplicaManager/sherbrooke_admin_log.txt
