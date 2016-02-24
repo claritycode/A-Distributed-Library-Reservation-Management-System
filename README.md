@@ -1,4 +1,2 @@
-comp6231_fall2014
+A Distributed Library Reservation Management System
 =================
-
-shared repo for comp6231
